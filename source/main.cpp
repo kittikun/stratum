@@ -13,8 +13,6 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Stratum.  If not, see <http://www.gnu.org/licenses/>.
 
-#define BOOST_LIB_DIAGNOSTIC
-
 #include <boost/thread.hpp>
 #include <EGL/egl.h>
 #include <EGL/eglplatform.h>
@@ -31,8 +29,6 @@ int main(int, char**)
     EGLConfig eglConfig; 
     EGLSurface eglSurface; 
     EGLContext eglContext; 
-    EGLNativeDisplayType nativeDisplay;
-    EGLNativeWindowType nativeWindow;
     EGLBoolean ret; 
     
     EGLint eglConfigAttribs[] = { 
@@ -48,10 +44,14 @@ int main(int, char**)
 
     EGLint eglContectAttribs[] = { 
         EGL_CONTEXT_CLIENT_VERSION, 1
-    }; 
+    };
+
+    Stratum::Log::init();
  
-    Stratum::CreateWindow(info);
-       
+    if (!Stratum::CreateNativeWindow(info)) {
+        LOGC << "Failed to create native window.";
+    }
+
     display = eglGetDisplay(info.display);
     assert(display != EGL_NO_DISPLAY);
     ret = eglInitialize(display, &major, &minor);
@@ -59,9 +59,9 @@ int main(int, char**)
     ret = eglChooseConfig(display, eglConfigAttribs, &eglConfig, 1, &configSize);
     assert(ret == EGL_TRUE);
     eglSurface = eglCreateWindowSurface(info.display, eglConfig, info.window, NULL);
-//  eglContext = eglCreateContext(display, eglConfig, EGL_NO_CONTEXT, eglContectAttribs);
-//  ret = eglMakeCurrent(display, eglSurface, eglSurface, eglContext);
-//  assert(ret == EGL_TRUE);
+    eglContext = eglCreateContext(display, eglConfig, EGL_NO_CONTEXT, eglContectAttribs);
+    ret = eglMakeCurrent(display, eglSurface, eglSurface, eglContext);
+    assert(ret == EGL_TRUE);
     
     return 0; 
 }

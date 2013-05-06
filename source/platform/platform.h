@@ -13,6 +13,8 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Stratum.  If not, see <http://www.gnu.org/licenses/>.
 
+#include <EGL/egl.h>
+
 namespace Stratum
 {
 
@@ -22,6 +24,6 @@ struct NativeInfo
     EGLNativeWindowType window;
 };
 
-extern const bool CreateWindow(NativeInfo& info);
+extern const bool CreateNativeWindow(NativeInfo& info);
 
 } // namespace Stratum

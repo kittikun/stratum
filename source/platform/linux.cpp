@@ -17,12 +17,13 @@
 
 #ifdef __linux__
 
+#include "platform.h"
+
 #include <X11/Xlib.h>
 #include <EGL/egl.h>
 #include <string.h>
 
 #include "../log.h"
-#include "platform.h"
 
 namespace Stratum
 {

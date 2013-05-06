@@ -16,30 +16,33 @@
 #ifndef LOG_H
 #define LOG_H
 
+#include <boost/log/expressions/keyword.hpp>
 #include <boost/log/sources/logger.hpp>
 #include <boost/log/sources/global_logger_storage.hpp>
 #include <boost/log/sources/record_ostream.hpp>
-#include <boost/log/sources/severity_feature.hpp>
 #include <boost/log/sources/severity_logger.hpp>
 
-#define LOG BOOST_LOG_SEV(log::get(), normal)
-#define LOGN BOOST_LOG_SEV(log::get(), notification)
-#define LOGC BOOST_LOG_SEV(log::get(), critical)
+#define LOG BOOST_LOG_SEV(Stratum::Log::boost_log::get(), Stratum::Log::normal)
+#define LOGN BOOST_LOG_SEV(Stratum::Log::boost_log::get(), Stratum::Log::notification)
+#define LOGC BOOST_LOG_SEV(Stratum::Log::boost_log::get(), Stratum::Log::critical)
 
 namespace Stratum
 {
+    namespace Log 
+    {
+        enum severity_level
+        {
+            normal,
+            notification,
+            warning,
+            error,
+            critical
+        };
 
-enum LogLevel
-{
-    normal,
-    notification,
-    warning,
-    error,
-    critical
-};
-
-BOOST_LOG_INLINE_GLOBAL_LOGGER_DEFAULT(log, boost::log::sources::severity_logger_mt<LogLevel>)
-
+        BOOST_LOG_INLINE_GLOBAL_LOGGER_DEFAULT(boost_log, boost::log::sources::severity_logger_mt<severity_level>)
+            
+        extern void init();
+    }
 } // namespace Stratum
 
 #endif // LOG_H
