@@ -5,7 +5,7 @@
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
 //
-//  Foobar is distributed in the hope that it will be useful,
+//  Stratum is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //  GNU General Public License for more details.
@@ -28,10 +28,11 @@
 namespace Stratum
 {
 
-const bool CreateWindow(Stratum::NativeInfo& info)
+static Display* x_display = NULL;
+
+const bool createNativeWindow(NativeInfo& info)
 {
     Atom wm_state;
-    Display* x_display = NULL;
     Window root;
     Window win;
     XEvent xev;
@@ -87,6 +88,33 @@ const bool CreateWindow(Stratum::NativeInfo& info)
     info.window = win;
 
     return true;
+}
+
+const bool destroyNativeWindow(const NativeInfo& info)
+{
+    LOGN << "Destroying native window..";
+
+    XDestroyWindow(info.display, info.window);
+    XCloseDisplay(info.display);
+    x_display = NULL;
+}
+
+const bool inputRead()
+{
+    XEvent xev;
+
+    XNextEvent(x_display, &xev); 
+    
+    if (xev.type == Expose) {
+//      XGetWindowAttributes(x_display, win, &gwa);
+        // todo: handle graphic resize
+    } else if (xev.type == KeyPress) {
+        return true;
+    } else if (xev.type == DestroyNotify) {
+        return true;
+    }
+
+    return false;
 }
 
 } // namepsace Stratum

@@ -5,7 +5,7 @@
 //  the Free Software Foundation, either version 3 of the License, or
 //  (at your option) any later version.
 //
-//  Foobar is distributed in the hope that it will be useful,
+//  Stratum is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 //  GNU General Public License for more details.
@@ -13,17 +13,23 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Stratum.  If not, see <http://www.gnu.org/licenses/>.
 
+#ifndef PLATFORM_H
+#define PLATFORM_H
+
 #include <EGL/egl.h>
 
 namespace Stratum
 {
+    struct NativeInfo
+    {
+        EGLNativeDisplayType display;
+        EGLNativeWindowType window;
+    };
 
-struct NativeInfo
-{
-    EGLNativeDisplayType display;
-    EGLNativeWindowType window;
-};
-
-extern const bool CreateNativeWindow(NativeInfo& info);
+    extern const bool createNativeWindow(NativeInfo& info);
+    extern const bool destroyNativeWindow(const NativeInfo& info);
+    extern const bool inputRead();
 
 } // namespace Stratum
+
+#endif // PLATFORM_H

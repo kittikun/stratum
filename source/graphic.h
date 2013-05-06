@@ -13,21 +13,40 @@
 //  You should have received a copy of the GNU General Public License
 //  along with Stratum.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "graphic.h"
+#ifndef GRAPHIC_H
+#define GRAPHIC_H
 
-#include "log.h"
+#include <boost/thread.hpp>
+#include <EGL/egl.h>
 
-int main(int, char**)
+#include "platform/platform.h"
+
+namespace Stratum
 {
-    Stratum::Graphic graphic;
+    class Graphic
+    {
+    private:
+        struct Context
+        {
+            NativeInfo nativeInfo;
+            EGLDisplay eglDisplay; 
+            EGLSurface eglSurface; 
+            EGLContext eglContext; 
+        };
 
-    Stratum::Log::init();
+    public:
+        bool initialize();
+        void cleanUp();
 
-    graphic.initialize();
+    private:
+        bool createContext();
+        void RenderLoop();
 
-    while (!Stratum::inputRead());
- 
-    graphic.cleanUp();
+    private:
+        boost::thread_group m_threads;
+        Context m_context;
+    };
 
-    return 0; 
-}
+} // namespace Stratum
+
+#endif // GRAPHIC_H
