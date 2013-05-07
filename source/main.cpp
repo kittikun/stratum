@@ -23,11 +23,12 @@ int main(int, char**)
 
     Stratum::Log::init();
 
-    graphic.initialize();
-
-    while (!Stratum::inputRead());
- 
-    graphic.cleanUp();
+    if (graphic.initialize())
+    {
+        while (!Stratum::inputRead());
+     
+        graphic.cleanUp();
+    }
 
     return 0; 
 }

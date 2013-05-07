@@ -24,6 +24,7 @@
 
 #define LOG BOOST_LOG_SEV(Stratum::Log::boost_log::get(), Stratum::Log::normal)
 #define LOGN BOOST_LOG_SEV(Stratum::Log::boost_log::get(), Stratum::Log::notification)
+#define LOGE BOOST_LOG_SEV(Stratum::Log::boost_log::get(), Stratum::Log::error)
 #define LOGC BOOST_LOG_SEV(Stratum::Log::boost_log::get(), Stratum::Log::critical)
 
 namespace Stratum

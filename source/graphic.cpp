@@ -20,6 +20,7 @@
 
 #include "platform/platform.h"
 #include "log.h"
+#include "utility.h"
 
 namespace Stratum
 {
@@ -54,7 +55,8 @@ bool Graphic::createContext()
     };
 
     EGLint eglContextAttribs[] = { 
-        EGL_CONTEXT_CLIENT_VERSION, 2
+        EGL_CONTEXT_CLIENT_VERSION, 2,
+        EGL_NONE
     };
 
     if (!createNativeWindow(m_context.nativeInfo)) {
@@ -63,44 +65,55 @@ bool Graphic::createContext()
     }
 
     m_context.eglDisplay = eglGetDisplay(m_context.nativeInfo.display);
-    LOGC << "eglGetError " << std::hex << eglGetError();
-    LOG << "eglDisplay " << std::hex << m_context.eglDisplay;
-    assert(m_context.eglDisplay != EGL_NO_DISPLAY);
+    if (m_context.eglDisplay == EGL_NO_DISPLAY) {
+        return VERIFYEGL();
+    }
+
     ret = eglInitialize(m_context.eglDisplay, &major, &minor);
-    LOGC << "eglGetError " << std::hex << eglGetError();
     if (ret != EGL_TRUE) {
-        LOGC << "eglInitialize failed.";
-        return false;
+        return VERIFYEGL();
+    }
+
+    ret = eglBindAPI(EGL_OPENGL_ES_API);
+    if (ret != EGL_TRUE) {
+        return VERIFYEGL();
     }
 
     ret = eglChooseConfig(m_context.eglDisplay, eglConfigAttribs, &eglConfig, 1, &configSize);
-    LOGC << "eglGetError " << std::hex << eglGetError();
+    assert(configSize == 1);
     if (ret != EGL_TRUE) {
-        LOGC << "eglChooseConfig failed.";
-        return false;
+        return VERIFYEGL();
     }
 
-    m_context.eglSurface = eglCreateWindowSurface(m_context.nativeInfo.display, eglConfig, m_context.nativeInfo.window, NULL);
-    LOG << "eglSurface " << std::hex << m_context.eglSurface;
-    LOGC << "eglGetError " << std::hex << eglGetError();
-    assert(m_context.eglSurface); 
-    m_context.eglContext = eglCreateContext(m_context.eglDisplay, eglConfig, EGL_NO_CONTEXT, eglContextAttribs);
-    LOGC << "eglGetError " << std::hex << eglGetError();
-    assert(m_context.eglContext);
-    ret = eglMakeCurrent(m_context.eglDisplay, m_context.eglSurface, m_context.eglSurface, m_context.eglContext);
-    LOGC << "eglGetError " << std::hex << eglGetError();
-    if (ret != EGL_TRUE) {
-        LOGC << "eglMakeCurrent failed.";
-        return false;
+    m_context.eglSurface = eglCreateWindowSurface(m_context.eglDisplay, eglConfig, m_context.nativeInfo.window, NULL);
+    if (m_context.eglSurface == EGL_NO_SURFACE) {
+        return VERIFYEGL();
     }
+
+    m_context.eglContext = eglCreateContext(m_context.eglDisplay, eglConfig, EGL_NO_CONTEXT, eglContextAttribs);
+    if (m_context.eglContext == EGL_NO_CONTEXT) {
+        return VERIFYEGL();
+    }
+
+    ret = eglMakeCurrent(m_context.eglDisplay, m_context.eglSurface, m_context.eglSurface, m_context.eglContext);
+    if (ret != EGL_TRUE) {
+        return VERIFYEGL();
+    }
+
+    return true;
 }
 
 bool Graphic::initialize()
 {
     bool ret;
 
-    LOGN << "creating renderer main thread";
     ret = createContext();
+    if (!ret) {
+        LOGC << "Could not initialize graphic engine";
+        return ret;
+    }
+
+    LOGN << "Creating graphic thread";
     m_threads.create_thread(boost::bind(&Graphic::RenderLoop, this));
 
     return ret;
@@ -108,14 +121,15 @@ bool Graphic::initialize()
 
 void Graphic::RenderLoop()
 {
+    bool ret;
+
     while (1) {
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         LOG << "swap buffer";
-        EGLBoolean ret = eglSwapBuffers(m_context.eglDisplay, m_context.eglSurface);
-        LOGC << ret;
-        LOGC <<  std::hex << eglGetError();
+        eglSwapBuffers(m_context.eglDisplay, m_context.eglSurface);
+        ret = VERIFYEGL();
         assert(ret);
     }
 }
