@@ -44,13 +44,15 @@ bool Graphic::createContext()
     EGLBoolean ret; 
 
     EGLint eglConfigAttribs[] = { 
-        EGL_RED_SIZE, 8, 
-        EGL_GREEN_SIZE, 8, 
-        EGL_BLUE_SIZE, 8, 
-        EGL_ALPHA_SIZE, 8, 
+        EGL_BUFFER_SIZE, 32, 
         EGL_DEPTH_SIZE, 16, 
         EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT, 
         EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+        EGL_NONE
+    };
+
+    EGLint eglSurfaceAttribs[] = {
+        EGL_RENDER_BUFFER, EGL_BACK_BUFFER,
         EGL_NONE
     };
 
@@ -74,6 +76,8 @@ bool Graphic::createContext()
         return VERIFYEGL();
     }
 
+    LOGGFX << "EGL " << major << "." << minor << " initialized.";
+
     ret = eglBindAPI(EGL_OPENGL_ES_API);
     if (ret != EGL_TRUE) {
         return VERIFYEGL();
@@ -85,7 +89,7 @@ bool Graphic::createContext()
         return VERIFYEGL();
     }
 
-    m_context.eglSurface = eglCreateWindowSurface(m_context.eglDisplay, eglConfig, m_context.nativeInfo.window, NULL);
+    m_context.eglSurface = eglCreateWindowSurface(m_context.eglDisplay, eglConfig, m_context.nativeInfo.window, eglSurfaceAttribs);
     if (m_context.eglSurface == EGL_NO_SURFACE) {
         return VERIFYEGL();
     }
@@ -109,11 +113,11 @@ bool Graphic::initialize()
 
     ret = createContext();
     if (!ret) {
-        LOGC << "Could not initialize graphic engine";
+        LOGC << "Could not initialize graphic engine.";
         return ret;
     }
 
-    LOGN << "Creating graphic thread";
+    LOGGFX << "Creating thread..";
     m_threads.create_thread(boost::bind(&Graphic::RenderLoop, this));
 
     return ret;
@@ -127,7 +131,7 @@ void Graphic::RenderLoop()
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        LOG << "swap buffer";
+        LOGGFX << "swap buffer";
         eglSwapBuffers(m_context.eglDisplay, m_context.eglSurface);
         ret = VERIFYEGL();
         assert(ret);

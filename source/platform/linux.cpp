@@ -40,11 +40,11 @@ const bool createNativeWindow(NativeInfo& info)
     XSetWindowAttributes xattr;
     XWMHints hints;
 
-    LOGN << "Creating native window..";
+    LOGGFX << "Creating native window..";
     x_display = XOpenDisplay(NULL);
 
     if (x_display == NULL) {
-        LOGC << "Cannot connect to X server";
+        LOGC << "Cannot connect to X server.";
         return false;
     }
 
@@ -92,7 +92,7 @@ const bool createNativeWindow(NativeInfo& info)
 
 const bool destroyNativeWindow(const NativeInfo& info)
 {
-    LOGN << "Destroying native window..";
+    LOGGFX << "Destroying native window..";
 
     XDestroyWindow(info.display, info.window);
     XCloseDisplay(info.display);

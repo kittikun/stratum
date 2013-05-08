@@ -22,8 +22,9 @@
 #include <boost/log/sources/record_ostream.hpp>
 #include <boost/log/sources/severity_logger.hpp>
 
-#define LOG BOOST_LOG_SEV(Stratum::Log::boost_log::get(), Stratum::Log::normal)
-#define LOGN BOOST_LOG_SEV(Stratum::Log::boost_log::get(), Stratum::Log::notification)
+#define LOG BOOST_LOG_SEV(Stratum::Log::boost_log::get(), Stratum::Log::generic)
+#define LOGGFX BOOST_LOG_SEV(Stratum::Log::boost_log::get(), Stratum::Log::gfx)
+#define LOGW BOOST_LOG_SEV(Stratum::Log::boost_log::get(), Stratum::Log::warning)
 #define LOGE BOOST_LOG_SEV(Stratum::Log::boost_log::get(), Stratum::Log::error)
 #define LOGC BOOST_LOG_SEV(Stratum::Log::boost_log::get(), Stratum::Log::critical)
 
@@ -33,8 +34,8 @@ namespace Stratum
     {
         enum severity_level
         {
-            normal,
-            notification,
+            generic,
+            gfx,
             warning,
             error,
             critical

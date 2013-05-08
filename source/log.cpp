@@ -51,8 +51,8 @@ namespace Stratum
         { 
             static const char* strings[] = 
             { 
-                "log", 
-                "notify", 
+                "generic", 
+                "gfx", 
                 "WARNING", 
                 "ERROR", 
                 "CRITICAL"
