@@ -11,14 +11,18 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\source\graphic.cpp" />
     <ClCompile Include="..\..\source\log.cpp" />
     <ClCompile Include="..\..\source\main.cpp" />
     <ClCompile Include="..\..\source\platform\linux.cpp" />
     <ClCompile Include="..\..\source\platform\win.cpp" />
+    <ClCompile Include="..\..\source\utility.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\source\graphic.h" />
     <ClInclude Include="..\..\source\log.h" />
     <ClInclude Include="..\..\source\platform\platform.h" />
+    <ClInclude Include="..\..\source\utility.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{298D5A57-244F-489A-8CC8-4403D1867ED7}</ProjectGuid>
@@ -51,7 +55,7 @@
   <PropertyGroup />
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>C:\Boost\include\boost-1_53;C:\Program Files %28x86%29\NVIDIA Corporation\win_x86_es2emu\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -61,6 +65,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>C:\Boost\lib;C:\Program Files %28x86%29\NVIDIA Corporation\win_x86_es2emu\lib\release;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>libGLES20.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <LinkStatus>
+      </LinkStatus>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

@@ -34,10 +34,9 @@ const bool createNativeWindow(NativeInfo& info)
     TCHAR className[] = TEXT("Stratum");
     HDC hdc;
     HWND hwnd ;
-    //int  iPixelFormat;
     WNDCLASS wndclass;
 
-    LOGN << "Creating native window..";
+    LOGGFX << "Creating native window..";
 
     wndclass.style         = CS_HREDRAW | CS_VREDRAW ;
     wndclass.lpfnWndProc   = WndProc ;
@@ -53,7 +52,7 @@ const bool createNativeWindow(NativeInfo& info)
     if (!RegisterClass(&wndclass))
     {
         LOGC << "This program requires Windows NT!";
-        return 0 ;
+        return false;
     }
 
     hwnd = CreateWindowEx(NULL, className, TEXT ("Test"), WS_OVERLAPPEDWINDOW, 
@@ -69,75 +68,21 @@ const bool createNativeWindow(NativeInfo& info)
     return true;
 }
 
+const bool destroyNativeWindow(const NativeInfo& info)
+{
+    DestroyWindow(info.window);
 
-//int main(int, char**)
-//{
-//
-//    //PIXELFORMATDESCRIPTOR pfd = { 
-//    //    sizeof(PIXELFORMATDESCRIPTOR),   // size of this pfd  
-//    //    1,                     // version number  
-//    //    PFD_DRAW_TO_WINDOW |   // support window  
-//    //    PFD_SUPPORT_OPENGL |   // support OpenGL  
-//    //    PFD_DOUBLEBUFFER,      // double buffered  
-//    //    PFD_TYPE_RGBA,         // RGBA type  
-//    //    24,                    // 24-bit color depth excluding alpha
-//    //    0, 0, 0, 0, 0, 0,      // color bits ignored  
-//    //    8,                     // no alpha buffer  
-//    //    0,                     // shift bit ignored  
-//    //    0,                     // no accumulation buffer  
-//    //    0, 0, 0, 0,            // accum bits ignored  
-//    //    16,                    // 32-bit z-buffer  
-//    //    0,                     // no stencil buffer  
-//    //    0,                     // no auxiliary buffer  
-//    //    0,                     // ignored. 
-//    //    0,                     // reserved  
-//    //    0, 0, 0                // layer masks ignored  
-//    //};
-//    //iPixelFormat = ChoosePixelFormat(hdc, &pfd);
-//    //ret = SetPixelFormat(hdc, iPixelFormat, &pfd);
-//
-//    EGLint major, minor;
-//    EGLDisplay display;
-//    EGLint configSize;
-//    EGLConfig eglConfig;
-//    EGLSurface eglSurface;
-//    EGLContext eglContext;
-//    EGLint eglConfigAttribs[] = {
-//        EGL_RED_SIZE, 8,
-//        EGL_GREEN_SIZE, 8,
-//        EGL_BLUE_SIZE, 8,
-//        EGL_ALPHA_SIZE, 8,
-//        EGL_DEPTH_SIZE, 16,
-//        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-//        EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
-//        EGL_NONE
-//    };
-//    EGLint eglContectAttribs[] = {
-//        EGL_CONTEXT_CLIENT_VERSION, 1
-//    };
-//
-//    display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-//    assert(display != EGL_NO_DISPLAY);
-//    ret = eglInitialize(display, &major, &minor);
-//    assert(ret == EGL_TRUE);
-//    ret = eglChooseConfig(display, eglConfigAttribs, &eglConfig, 1, &configSize); 
-//    assert(ret == EGL_TRUE);
-//    eglSurface = eglCreateWindowSurface(display, eglConfig, hwnd, NULL);
-//    eglContext = eglCreateContext(display, eglConfig, EGL_NO_CONTEXT, eglContectAttribs);
-//    ret = eglMakeCurrent(display, eglSurface, eglSurface, eglContext);
-//    assert(ret == EGL_TRUE);
-//
-//    while (GetMessage (&msg, NULL, 0, 0))
-//    {
-//        TranslateMessage (&msg) ;
-//        DispatchMessage (&msg) ;
-//    }
-//
-//    eglTerminate(display);
-//    //ReleaseDC(hwnd, hdc);
-//
-//    return msg.wParam ;
-//}
+    return true;
+}
+
+void initializeInput()
+{
+}
+
+const bool inputRead()
+{
+    return false;
+}
 
 } // namespace Stratum
 

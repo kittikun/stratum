@@ -127,15 +127,15 @@ void Graphic::RenderLoop()
 {
     bool ret;
 
-    while (1) {
+    //while (1) {
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
         LOGGFX << "swap buffer";
         eglSwapBuffers(m_context.eglDisplay, m_context.eglSurface);
-        ret = VERIFYEGL();
+        ret = VERIFYGL();
         assert(ret);
-    }
+    //}
 }
 
 } // namespace Stratum

@@ -16,8 +16,10 @@
 #ifndef UTILITY_H
 #define UTILITY_H
 
-#include <string>
 #include <EGL/egl.h>
+#include <GLES2/gl2.h>
+#include <string>
+
 
 // Enable VERIFY_GL_ON in order to get detailed information about failing tests,
 // such as the line number and failure circumstances.
@@ -35,16 +37,7 @@ namespace Stratum {
 
     const std::string eglErrorEnumToString(EGLint err);
     const bool VerifyEGL(EGLint expectedError, const char *file, unsigned line);
-
-//    const bool VerifyGL(GLenum expectedError, const char *file, unsigned line) {
-//        GLenum glError = glGetError();
-//        if (glError != expectedError) {
-////          LOGE(("Unexpected GL_Error at\n%d: %s\n\tgot: %s; expected: %s\n", line, file, ::ErrorEnumToString(glError), ::ErrorEnumToString(expectedError)));
-//            return false;
-//        }
-//        return true;
-//    }
-
+    const bool VerifyGL(GLenum expectedError, const char *file, unsigned line);
     
      
 } // namespace Stratum

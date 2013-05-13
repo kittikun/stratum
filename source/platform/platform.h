@@ -28,6 +28,7 @@ namespace Stratum
 
     extern const bool createNativeWindow(NativeInfo& info);
     extern const bool destroyNativeWindow(const NativeInfo& info);
+    extern void initializeInput();
     extern const bool inputRead();
 
 } // namespace Stratum
