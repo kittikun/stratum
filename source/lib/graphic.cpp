@@ -1,17 +1,19 @@
+//  Copyright 2013 Kitti Vongsay
+// 
 //  This file is part of Stratum.
 //
 //  Stratum is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
+//  it under the terms of the GNU Lesser General Public License as 
+//  published by the Free Software Foundation, either version 3 of
+//  the License, or(at your option) any later version.
 //
 //  Stratum is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
+//  GNU Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU General Public License
-//  along with Stratum.  If not, see <http://www.gnu.org/licenses/>.
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with Stratum.   If not, see <http://www.gnu.org/licenses/>.
 
 #include "graphic.h"
 
@@ -38,16 +40,20 @@ void Graphic::cleanUp()
 
 bool Graphic::createContext()
 {
-    EGLint major, minor;
-    EGLint configSize; 
-    EGLConfig eglConfig; 
+    const char* str;
     EGLBoolean ret; 
+    EGLConfig eglConfig; 
+    EGLContext eglContext;
+    EGLDisplay eglDisplay;
+    EGLint configSize; 
+    EGLSurface eglSurface;
 
     EGLint eglConfigAttribs[] = { 
-        EGL_BUFFER_SIZE, 32, 
-        EGL_DEPTH_SIZE, 16, 
-        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT, 
-        EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+        EGL_RED_SIZE, 1,
+        EGL_GREEN_SIZE, 1,
+        EGL_BLUE_SIZE, 1,
+        EGL_DEPTH_SIZE, 1,
+        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
         EGL_NONE
     };
 
@@ -66,43 +72,57 @@ bool Graphic::createContext()
         return false;
     }
 
-    m_context.eglDisplay = eglGetDisplay(m_context.nativeInfo.display);
-    if (m_context.eglDisplay == EGL_NO_DISPLAY) {
+    eglDisplay = eglGetDisplay(m_context.nativeInfo.display);
+    if (eglDisplay == EGL_NO_DISPLAY) {
         return VERIFYEGL();
     }
 
-    ret = eglInitialize(m_context.eglDisplay, &major, &minor);
+    ret = eglInitialize(eglDisplay, NULL, NULL);
     if (ret != EGL_TRUE) {
         return VERIFYEGL();
     }
 
-    LOGGFX << "EGL " << major << "." << minor << " initialized.";
+    str = eglQueryString(eglDisplay, EGL_VERSION);
+    LOGGFX << "EGL_VERSION = " << str;
+
+    str = eglQueryString(eglDisplay, EGL_VENDOR);
+    LOGGFX << "EGL_VENDOR = " << str;
+
+    str = eglQueryString(eglDisplay, EGL_EXTENSIONS);
+    LOGGFX << "EGL_EXTENSIONS = " << str;
+
+    str = eglQueryString(eglDisplay, EGL_CLIENT_APIS);
+    LOGGFX << "EGL_CLIENT_APIS = " << str;
 
     ret = eglBindAPI(EGL_OPENGL_ES_API);
     if (ret != EGL_TRUE) {
         return VERIFYEGL();
     }
 
-    ret = eglChooseConfig(m_context.eglDisplay, eglConfigAttribs, &eglConfig, 1, &configSize);
+    ret = eglChooseConfig(eglDisplay, eglConfigAttribs, &eglConfig, 1, &configSize);
     assert(configSize == 1);
     if (ret != EGL_TRUE) {
         return VERIFYEGL();
     }
 
-    m_context.eglSurface = eglCreateWindowSurface(m_context.eglDisplay, eglConfig, m_context.nativeInfo.window, eglSurfaceAttribs);
-    if (m_context.eglSurface == EGL_NO_SURFACE) {
+    eglSurface = eglCreateWindowSurface(eglDisplay, eglConfig, m_context.nativeInfo.window, eglSurfaceAttribs);
+    if (eglSurface == EGL_NO_SURFACE) {
         return VERIFYEGL();
     }
 
-    m_context.eglContext = eglCreateContext(m_context.eglDisplay, eglConfig, EGL_NO_CONTEXT, eglContextAttribs);
-    if (m_context.eglContext == EGL_NO_CONTEXT) {
+    eglContext = eglCreateContext(eglDisplay, eglConfig, EGL_NO_CONTEXT, eglContextAttribs);
+    if (eglContext == EGL_NO_CONTEXT) {
         return VERIFYEGL();
     }
 
-    ret = eglMakeCurrent(m_context.eglDisplay, m_context.eglSurface, m_context.eglSurface, m_context.eglContext);
+    ret = eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
     if (ret != EGL_TRUE) {
         return VERIFYEGL();
     }
+
+    m_context.eglDisplay = eglDisplay;
+    m_context.eglSurface = eglSurface;
+    m_context.eglContext = eglContext;
 
     return true;
 }
@@ -117,7 +137,7 @@ bool Graphic::initialize()
         return ret;
     }
 
-    LOGGFX << "Creating thread..";
+    LOGGFX << "Creating graphic thread..";
     m_threads.create_thread(boost::bind(&Graphic::RenderLoop, this));
 
     return ret;

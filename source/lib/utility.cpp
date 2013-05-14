@@ -1,23 +1,25 @@
+//  Copyright 2013 Kitti Vongsay
+// 
 //  This file is part of Stratum.
 //
 //  Stratum is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU General Public License as published by
-//  the Free Software Foundation, either version 3 of the License, or
-//  (at your option) any later version.
+//  it under the terms of the GNU Lesser General Public License as 
+//  published by the Free Software Foundation, either version 3 of
+//  the License, or(at your option) any later version.
 //
 //  Stratum is distributed in the hope that it will be useful,
 //  but WITHOUT ANY WARRANTY; without even the implied warranty of
 //  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//  GNU General Public License for more details.
+//  GNU Lesser General Public License for more details.
 //
-//  You should have received a copy of the GNU General Public License
-//  along with Stratum.  If not, see <http://www.gnu.org/licenses/>.
-
+//  You should have received a copy of the GNU Lesser General Public
+//  License along with Stratum.   If not, see <http://www.gnu.org/licenses/>.
 #include "utility.h"
 
 #include <stdio.h>
 
 #include "log.h"
+#include "platform/platform.h"
 
 namespace Stratum {
 
@@ -57,11 +59,9 @@ namespace Stratum {
         }
 
         char buff[30];
-#ifdef _WIN32
-        _snprintf_s(buff, 40, "Unknown EGL error %#4X", (unsigned int)err);
-#else
+
         snprintf(buff, 30, "Unknown EGL error %#4X", (unsigned int)err);
-#endif
+
         return buff;
     }
 
@@ -81,11 +81,9 @@ namespace Stratum {
         }
 
         char buff[30];
-#ifdef _WIN32
-        _snprintf_s(buff, 40, "Unknown GL error %#4X", (unsigned int)err);
-#else
+
         snprintf(buff, 30, "Unknown GL error %#4X", (unsigned int)err);
-#endif
+
         return buff;
     }
 
