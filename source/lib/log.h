@@ -18,6 +18,7 @@
 #ifndef LOG_H
 #define LOG_H
 
+#include <boost/format.hpp> 
 #include <boost/log/expressions/keyword.hpp>
 #include <boost/log/sources/logger.hpp>
 #include <boost/log/sources/global_logger_storage.hpp>
@@ -47,7 +48,7 @@ namespace Stratum
 
         BOOST_LOG_INLINE_GLOBAL_LOGGER_DEFAULT(boost_log, boost::log::sources::severity_logger_mt<severity_level>)
             
-        extern void init();
+        extern void initialize();
 
     } //namespace Log
 

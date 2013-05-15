@@ -37,7 +37,7 @@ namespace Stratum
         EGLNativeWindowType window;
     };
 
-    extern const bool createNativeWindow(NativeInfo& info);
+    extern const bool createNativeWindow(const uint32_t width, const uint32_t height, NativeInfo& outInfo);
     extern const bool destroyNativeWindow(const NativeInfo& info);
     extern void initializeInput();
     extern const bool inputRead();

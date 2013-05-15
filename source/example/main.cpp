@@ -28,37 +28,30 @@ namespace po = boost::program_options;
 int main(int ac, char** av)
 {
     Stratum::Graphic graphic;
+    po::options_description desc("Allowed options");
+    po::positional_options_description p;
+    po::variables_map vm;
 
     try {
-        po::options_description desc("Allowed options");
 
         desc.add_options()
             ("help,h", "output help message")
-            ("width,w", po::value<int>()->required(), "window width")
+            ("width,w", po::value<uint32_t>()->default_value(800)->required(), "window width")
+            ("height,h", po::value<uint32_t>()->default_value(600)->required(), "window height")
         ;
 
-        po::positional_options_description p;
         p.add("width", 1);
 
-        po::variables_map vm;
         po::store(po::command_line_parser(ac, av).
                   options(desc).positional(p).run(), vm);
 
-
-        if (vm.count() == 0) {
-            std::cout << "salpo" << std::endl;
-        }
-
-        if (vm.count("help")) {
-            std::cout << "USAGE: " << av[0] << &p <<  std::endl;
+        if ((ac == 0) || (vm.count("help"))) {
+            std::cout << "USAGE: " << desc <<  std::endl;
             return 0;
         }
 
         po::notify(vm);
 
-        if (vm.count("width")) {
-            std::cout << "width: " << vm["width"].as<int>() << "\n";
-        }
     } catch (std::exception& e) {
         std::cout << e.what() << std::endl;
 
@@ -67,9 +60,9 @@ int main(int ac, char** av)
         std::cout << "Exception of unknown type!" << std::endl;
     }
 
-    Stratum::Log::init();
+    Stratum::Log::initialize();
 
-    if (graphic.initialize()) {
+    if (graphic.initialize(vm["width"].as<uint32_t>(), vm["height"].as<uint32_t>())) {
         while (!Stratum::inputRead());
 
         graphic.cleanUp();

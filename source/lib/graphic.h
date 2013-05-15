@@ -37,7 +37,7 @@ namespace Stratum
         };
 
     public:
-        bool initialize();
+        const bool initialize(const uint32_t width, const uint32_t height);
         void cleanUp();
 
     private:

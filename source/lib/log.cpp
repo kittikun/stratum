@@ -38,7 +38,7 @@ namespace Stratum
 
         BOOST_LOG_ATTRIBUTE_KEYWORD(severity, "Severity", severity_level)
 
-        void init() 
+        void initialize() 
         { 
             logging::add_console_log(std::cout, keywords::format = (expr::format("%1%: [%2%] %3%")
                                                                     % expr::format_date_time<boost::posix_time::ptime>("TimeStamp", "%H:%M:%S")

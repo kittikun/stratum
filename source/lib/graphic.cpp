@@ -57,20 +57,10 @@ bool Graphic::createContext()
         EGL_NONE
     };
 
-    EGLint eglSurfaceAttribs[] = {
-        EGL_RENDER_BUFFER, EGL_BACK_BUFFER,
-        EGL_NONE
-    };
-
     EGLint eglContextAttribs[] = { 
         EGL_CONTEXT_CLIENT_VERSION, 2,
         EGL_NONE
     };
-
-    if (!createNativeWindow(m_context.nativeInfo)) {
-        LOGC << "createNativeWindow failed.";
-        return false;
-    }
 
     eglDisplay = eglGetDisplay(m_context.nativeInfo.display);
     if (eglDisplay == EGL_NO_DISPLAY) {
@@ -105,7 +95,7 @@ bool Graphic::createContext()
         return VERIFYEGL();
     }
 
-    eglSurface = eglCreateWindowSurface(eglDisplay, eglConfig, m_context.nativeInfo.window, eglSurfaceAttribs);
+    eglSurface = eglCreateWindowSurface(eglDisplay, eglConfig, m_context.nativeInfo.window, NULL);
     if (eglSurface == EGL_NO_SURFACE) {
         return VERIFYEGL();
     }
@@ -127,9 +117,14 @@ bool Graphic::createContext()
     return true;
 }
 
-bool Graphic::initialize()
+const bool Graphic::initialize(const uint32_t width, const uint32_t height)
 {
     bool ret;
+
+    if (!createNativeWindow(width, height, m_context.nativeInfo)) {
+        LOGC << "createNativeWindow failed.";
+        return false;
+    }
 
     ret = createContext();
     if (!ret) {

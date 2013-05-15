@@ -30,7 +30,7 @@ namespace Stratum
 
 static Display* x_display = NULL;
 
-const bool createNativeWindow(NativeInfo& info)
+const bool createNativeWindow(const uint32_t width, const uint32_t height, NativeInfo& outInfo)
 {
     Atom wm_state;
     Window root;
@@ -40,7 +40,8 @@ const bool createNativeWindow(NativeInfo& info)
     XSetWindowAttributes xattr;
     XWMHints hints;
 
-    LOGP << "Creating native window..";
+    LOGP << boost::format("Creating %1%x%2% native window..") % width % height;
+
     x_display = XOpenDisplay(NULL);
 
     if (x_display == NULL) {
@@ -52,7 +53,7 @@ const bool createNativeWindow(NativeInfo& info)
     swa.event_mask = ExposureMask | PointerMotionMask | KeyPressMask;
 
     win = XCreateWindow(x_display, root,
-                        0, 0, 640, 480, 0,
+                        0, 0, width, height, 0,
                         CopyFromParent, InputOutput,
                         CopyFromParent, CWEventMask,
                         &swa);
@@ -84,8 +85,8 @@ const bool createNativeWindow(NativeInfo& info)
                SubstructureNotifyMask,
                &xev);
 
-    info.display = x_display;
-    info.window = win;
+    outInfo.display = x_display;
+    outInfo.window = win;
 
     return true;
 }
