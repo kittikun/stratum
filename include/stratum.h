@@ -22,7 +22,7 @@
 
 namespace stratum
 {
-    extern "C" __declspec(dllimport) void initialize();
+    extern "C" DllExport void initialize();
 
 } // namespace stratum
 

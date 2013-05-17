@@ -21,6 +21,8 @@
 #include <EGL/eglplatform.h>
 #include <GLES2/gl2.h>
 
+#include <platform.h>
+
 #include "log.h"
 #include "utility.h"
 

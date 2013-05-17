@@ -25,7 +25,7 @@
         #define DLLExport   __declspec(dllimport)
     #endif
 #elif defined(__linux__)
-    #define DLLExport
+    #define DllExport 
 #else
     #error "unknown platform"
 #endif

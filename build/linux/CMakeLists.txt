@@ -1,21 +1,23 @@
 cmake_minimum_required(VERSION 2.6)
 
-project(stratum)
+project(stratumLib)
 
-set(SRC_PATH	${PROJECT_SOURCE_DIR}/../../source)
+set(ROOT_PATH   ${PROJECT_SOURCE_DIR}/../../)
+set(SRC_PATH	${ROOT_PATH}/source)
+set(OUT_PATH    ${ROOT_PATH}/lib)
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11") 
 
 # Stratum library
-set(LIB_PATH	${PROJECT_SOURCE_DIR}/../../source/lib)
+set(LIB_PATH	${PROJECT_SOURCE_DIR}/../../src)
 
+set(INCLUDE_PATH ${PROJECT_SOURCE_DIR}/../../include)
+include_directories(${INCLUDE_PATH})
 
-set(LIB_SRC 	${LIB_PATH}/graphic.cpp
-		${LIB_PATH}/log.cpp
-		${LIB_PATH}/utility.cpp
-		${LIB_PATH}/platform/linux.cpp)
-
-add_library(Stratum SHARED ${LIB_SRC})
-set (EXTRA_LIBS Stratum)
+set(LIB_SRC 	${LIB_PATH}/export.cpp
+                ${LIB_PATH}/graphic_impl.cpp
+		        ${LIB_PATH}/log.cpp
+		        ${LIB_PATH}/utility.cpp
+		        ${LIB_PATH}/platform/linux.cpp)
 
 # required libs
 set(EXTRA_LIBS ${EXTRA_LIBS} libEGL.so libGLESv2.so)
@@ -33,11 +35,7 @@ if (X11_FOUND)
   set(EXTRA_LIBS ${EXTRA_LIBS} ${X11_LIBRARIES})
 endif(X11_FOUND)
 
-# exe
-set(EXECUTABLE_NAME test)
-set(EXE_SRC ${SRC_PATH}/example/main.cpp)
-include_directories ("${LIB_PATH}")
-add_executable(${EXECUTABLE_NAME} ${EXE_SRC})
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${OUT_PATH})
 
-target_link_libraries (${EXECUTABLE_NAME} ${EXTRA_LIBS})
+add_library(Stratum SHARED ${LIB_SRC})
 

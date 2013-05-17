@@ -17,7 +17,7 @@
 
 #ifdef __linux__
 
-#include "platform.h"
+#include "platform_impl.h"
 
 #include <X11/Xlib.h>
 #include <EGL/egl.h>

@@ -21,13 +21,12 @@
 
 // Stratum headers
 #include <graphic.h>
-#include <log.h>
+#include <stratum.h>
 
 namespace po = boost::program_options;
 
 int main(int ac, char** av)
 {
-    Stratum::Graphic graphic;
     po::options_description desc("Allowed options");
     po::positional_options_description p;
     po::variables_map vm;
@@ -61,13 +60,19 @@ int main(int ac, char** av)
         std::cout << "Exception of unknown type!" << std::endl;
     }
 
-    Stratum::Log::initialize();
+    boost::shared_ptr<stratum::Graphic> graphic = stratum::getGraphic();
 
-    if (graphic.initialize(vm["width"].as<uint32_t>(), vm["height"].as<uint32_t>())) {
-        while (!Stratum::inputRead());
+    stratum::initialize();
+    graphic->initialize(vm["width"].as<uint32_t>(), vm["height"].as<uint32_t>());
+//  Stratum::Log::initialize();
+//
+//  if (graphic.initialize(vm["width"].as<uint32_t>(), vm["height"].as<uint32_t>())) {
+//      while (!Stratum::inputRead());
+//
+//      graphic.cleanUp();
+//  }
 
-        graphic.cleanUp();
-    }
+    graphic->cleanUp();
 
     return 0;
 }

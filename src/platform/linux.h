@@ -18,6 +18,7 @@
 #ifndef LINUX_H
 #define LINUX_H
 
-#define DLLExport
+// for snprintf
+#include <stdio.h>
 
 #endif // LINUX_H
