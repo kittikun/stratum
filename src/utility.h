@@ -40,7 +40,11 @@ namespace stratum {
     const std::string eglErrorEnumToString(EGLint err);
     const bool VerifyEGL(EGLint expectedError, const char *file, unsigned line);
     const bool VerifyGL(GLenum expectedError, const char *file, unsigned line);
-    
+
+    inline const char* nullToStr(const char * const str)
+    {
+        return (str != nullptr) ? str : "NULL";
+    }
      
 } // namespace stratum
 

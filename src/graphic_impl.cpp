@@ -89,7 +89,7 @@ bool GraphicImpl::createContext()
     LOGGFX << "EGL_EXTENSIONS = " << str;
 
     str = eglQueryString(eglDisplay, EGL_CLIENT_APIS);
-    LOGGFX << "EGL_CLIENT_APIS = " << str;
+    LOGGFX << "EGL_CLIENT_APIS = " << nullToStr(str);
 
     ret = eglBindAPI(EGL_OPENGL_ES_API);
     if (ret != EGL_TRUE) {
@@ -152,10 +152,11 @@ void GraphicImpl::RenderLoop()
     //while (1) {
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
+        ret = VERIFYGL();
 
         LOGGFX << "swap buffer";
         eglSwapBuffers(m_context.eglDisplay, m_context.eglSurface);
-        ret = VERIFYGL();
+        ret = VERIFYEGL();
         assert(ret);
     //}
 }

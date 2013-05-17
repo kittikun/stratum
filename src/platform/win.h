@@ -18,12 +18,6 @@
 #ifndef WIN_H
 #define WIN_H
 
-#ifdef DLLEXPORT
-#define DllExport   __declspec(dllexport)
-#else
-#define DLLExport   __declspec(dllimport)
-#endif
-
 #define snprintf _snprintf_s
 
 #endif // WIN_H

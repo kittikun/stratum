@@ -39,8 +39,8 @@ int main(int ac, char** av)
             ("height,h", po::value<uint32_t>()->default_value(600)->required(), "window height")
         ;
 
-        p.add("width", -1);
-        p.add("height", -1);
+        p.add("width", 1);
+        p.add("height", 2);
 
         po::store(po::command_line_parser(ac, av).
                   options(desc).positional(p).run(), vm);

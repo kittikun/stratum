@@ -19,10 +19,10 @@
 #define PLATFORM_H
 
 #if defined(_WIN32)
-    #ifdef DLLEXPORT
+    #ifdef LIBRARY_EXPORT
         #define DllExport   __declspec(dllexport)
     #else
-        #define DLLExport   __declspec(dllimport)
+        #define DllExport   __declspec(dllimport)
     #endif
 #elif defined(__linux__)
     #define DllExport 

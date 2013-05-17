@@ -20,7 +20,7 @@
 
 #include <boost/shared_ptr.hpp>
 
-#include "platform.h"
+#include <platform.h>
 
 namespace stratum
 {
