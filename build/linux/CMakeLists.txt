@@ -5,7 +5,7 @@ project(stratumLib)
 set(ROOT_PATH   ${PROJECT_SOURCE_DIR}/../../)
 set(SRC_PATH	${ROOT_PATH}/source)
 set(OUT_PATH    ${ROOT_PATH}/lib)
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11") 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11") 
 
 # Stratum library
 set(LIB_PATH	${PROJECT_SOURCE_DIR}/../../src)

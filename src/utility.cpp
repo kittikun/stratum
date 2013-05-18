@@ -16,6 +16,9 @@
 //  License along with Stratum.   If not, see <http://www.gnu.org/licenses/>.
 #include "utility.h"
 
+#include <wchar.h>
+
+
 #include "log.h"
 #include "platform/platform_impl.h"
 

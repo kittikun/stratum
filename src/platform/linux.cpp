@@ -98,6 +98,8 @@ const bool destroyNativeWindow(const NativeInfo& info)
     XDestroyWindow(info.display, info.window);
     XCloseDisplay(info.display);
     x_display = NULL;
+
+    return true;
 }
 
 const bool inputRead()
