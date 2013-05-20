@@ -21,8 +21,7 @@
 #include <EGL/eglplatform.h>
 #include <GLES2/gl2.h>
 
-#include <platform.h>
-
+#include "platform/platform_impl.h"
 #include "log.h"
 #include "utility.h"
 
@@ -31,21 +30,29 @@ namespace stratum
 
 boost::shared_ptr<Graphic> getGraphic()
 {
-    return boost::shared_ptr<Graphic>(new GraphicImpl());
+    static bool instance = false; 
+    
+    if (instance == false) {
+        instance = true; 
+        
+        return boost::shared_ptr<Graphic>(new GraphicImpl());
+    }
+    
+    return nullptr;
 }
 
 void GraphicImpl::cleanUp()
 {
     m_threads.join_all();
     eglMakeCurrent(m_context.eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-    eglDestroyContext(m_context.nativeInfo.display, m_context.eglContext);
-    eglDestroySurface(m_context.nativeInfo.display, m_context.eglSurface);
+    eglDestroyContext(m_context.eglDisplay, m_context.eglContext);
+    eglDestroySurface(m_context.eglDisplay, m_context.eglSurface);
     eglTerminate(m_context.eglDisplay);
 
-    destroyNativeWindow(m_context.nativeInfo);
+    GetPlatform().destroyNativeWindow();
 }
 
-bool GraphicImpl::createContext()
+bool GraphicImpl::createContext(const GraphicOptions& options)
 {
     const char* str;
     EGLBoolean ret; 
@@ -69,7 +76,7 @@ bool GraphicImpl::createContext()
         EGL_NONE
     };
 
-    eglDisplay = eglGetDisplay(m_context.nativeInfo.display);
+    eglDisplay = eglGetDisplay(GetPlatform().getNativeDisplay());
     if (eglDisplay == EGL_NO_DISPLAY) {
         return VERIFYEGL();
     }
@@ -91,18 +98,20 @@ bool GraphicImpl::createContext()
     str = eglQueryString(eglDisplay, EGL_CLIENT_APIS);
     LOGGFX << "EGL_CLIENT_APIS = " << nullToStr(str);
 
-    ret = eglBindAPI(EGL_OPENGL_ES_API);
-    if (ret != EGL_TRUE) {
-        return VERIFYEGL();
-    }
-
     ret = eglChooseConfig(eglDisplay, eglConfigAttribs, &eglConfig, 1, &configSize);
     assert(configSize == 1);
     if (ret != EGL_TRUE) {
         return VERIFYEGL();
     }
 
-    eglSurface = eglCreateWindowSurface(eglDisplay, eglConfig, m_context.nativeInfo.window, NULL);
+    GetPlatform().createNativeWindow(options, eglConfig);
+
+    ret = eglBindAPI(EGL_OPENGL_ES_API);
+    if (ret != EGL_TRUE) {
+        return VERIFYEGL();
+    }
+
+    eglSurface = eglCreateWindowSurface(eglDisplay, eglConfig, GetPlatform().getNativeWindow(), NULL);
     if (eglSurface == EGL_NO_SURFACE) {
         return VERIFYEGL();
     }
@@ -124,16 +133,11 @@ bool GraphicImpl::createContext()
     return true;
 }
 
-const bool GraphicImpl::initialize(const uint32_t width, const uint32_t height)
+const bool GraphicImpl::initialize(const GraphicOptions& options)
 {
     bool ret;
 
-    if (!createNativeWindow(width, height, m_context.nativeInfo)) {
-        LOGC << "createNativeWindow failed.";
-        return false;
-    }
-
-    ret = createContext();
+    ret = createContext(options);
     if (!ret) {
         LOGC << "Could not initialize GraphicImpl engine.";
         return ret;

@@ -15,16 +15,25 @@
 //  You should have received a copy of the GNU Lesser General Public
 //  License along with Stratum.   If not, see <http://www.gnu.org/licenses/>.
 
-#include <stratum.h>
-
-#include "log.h"
+#include "core_impl.h"
 
 namespace stratum
 {
-    void initialize()
-    {
-        Log::initialize();
+
+Core* CreateCore()
+{
+    static bool instance = false; 
+    
+    if (instance == false) {
+        instance = true; 
+        
+        return new CoreImpl();
     }
+    
+    return nullptr;
+}
+
 
 } // namespace stratum
+
 

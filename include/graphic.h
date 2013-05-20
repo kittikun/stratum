@@ -18,20 +18,21 @@
 #ifndef GRAPHIC_H
 #define GRAPHIC_H
 
-#include <boost/shared_ptr.hpp>
-
-#include <platform.h>
-
 namespace stratum
 {
+    struct GraphicOptions
+    {
+        uint32_t width;
+        uint32_t height;
+        uint32_t depthSize;
+    };
+
     class Graphic
     {
     public:
-        virtual const bool initialize(const uint32_t width, const uint32_t height) = 0;
+        virtual const bool initialize(const GraphicOptions& options) = 0;
         virtual void cleanUp() = 0;
     };
-
-    DllExport boost::shared_ptr<Graphic> getGraphic();
 
 } // namespace stratum
 

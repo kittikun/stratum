@@ -15,40 +15,23 @@
 //  You should have received a copy of the GNU Lesser General Public
 //  License along with Stratum.   If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef GRAPHIC_IMPL_H
-#define GRAPHIC_IMPL_H
+#ifndef CORE_IMPL_H
+#define CORE_IMPL_H
 
-#include <boost/thread.hpp>
-#include <boost/utility.hpp>
-#include <EGL/egl.h>
-
-#include <graphic.h>
+#include <core.h>
 
 namespace stratum
 {
-    class GraphicImpl : public Graphic, boost::noncopyable
+    class CoreImpl : public Core, boost::noncopyable
     {
-    private:
-        struct Context
-        {
-            EGLDisplay eglDisplay; 
-            EGLSurface eglSurface; 
-            EGLContext eglContext; 
-        };
-
     public:
-        const bool initialize(const GraphicOptions& options);
-        void cleanUp();
+        void initialize();
+        virtual Graphic* createGraphic();
+    }
 
-    private:
-        bool createContext(const GraphicOptions& options);
-        void RenderLoop();
+    // only one instance is allowed
+    DllExport Core* CreateCore();
+}
 
-    private:
-        boost::thread_group m_threads;
-        Context m_context;
-    };
+#endif // CORE_IMPL_H
 
-} // namespace stratum
-
-#endif // GRAPHIC_IMPL_H

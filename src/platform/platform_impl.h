@@ -31,16 +31,22 @@
 
 namespace stratum
 {
-    struct NativeInfo
+    struct GraphicOptions;
+
+    class Platform
     {
-        EGLNativeDisplayType display;
-        EGLNativeWindowType window;
+    public:
+        virtual EGLNativeDisplayType getNativeDisplay() = 0;
+        virtual EGLNativeWindowType getNativeWindow() = 0;
+
+        virtual const bool createNativeWindow(const GraphicOptions& options, EGLConfig eglConfig) = 0;
+        virtual const bool destroyNativeWindow() = 0;
+
+        virtual void initializeInput() = 0;
+        virtual const bool inputRead() = 0;
     };
 
-    extern const bool createNativeWindow(const uint32_t width, const uint32_t height, NativeInfo& outInfo);
-    extern const bool destroyNativeWindow(const NativeInfo& info);
-    extern void initializeInput();
-    extern const bool inputRead();
+    Platform& GetPlatform();
 
 } // namespace stratum
 

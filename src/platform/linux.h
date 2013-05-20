@@ -18,7 +18,6 @@
 #ifndef LINUX_H
 #define LINUX_H
 
-// for snprintf
-#include <stdio.h>
+#include <stdio.h> // for snprintf
 
 #endif // LINUX_H

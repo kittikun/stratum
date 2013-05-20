@@ -15,16 +15,30 @@
 //  You should have received a copy of the GNU Lesser General Public
 //  License along with Stratum.   If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STRATUM_H
-#define STRATUM_H
+#ifndef CORE_H
+#define CORE_H
+
+#include <boost/shared_ptr.hpp>
 
 #include "platform.h"
 
+namespace stratum {
+    class Graphic;
+}
+    
+
+
 namespace stratum
 {
-    extern "C" DllExport void initialize();
+    class Core
+    {
+    public:
+        virtual void initialize() = 0;
 
-} // namespace stratum
+        virtual Graphic* createGraphic();
+    }
 
-#endif // STRATUM_H
+    DllExport Core* CreateCore();
+}
 
+#endif // CORE_H

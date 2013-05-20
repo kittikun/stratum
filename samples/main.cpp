@@ -20,12 +20,12 @@
 #include <iostream>
 
 // Stratum headers
+#include <core.h>
 #include <graphic.h>
-#include <stratum.h>
 
 namespace po = boost::program_options;
 
-int main(int ac, char** av)
+int main(int ac, char **av)
 {
     po::options_description desc("Allowed options");
     po::positional_options_description p;
@@ -34,13 +34,15 @@ int main(int ac, char** av)
     try {
 
         desc.add_options()
-            ("help,h", "output help message")
-            ("width,w", po::value<uint32_t>()->default_value(800)->required(), "window width")
-            ("height,h", po::value<uint32_t>()->default_value(600)->required(), "window height")
+           ("help,h", "output help message")
+           ("width,w", po::value<uint32_t>()->default_value(800)->required(), "window width")
+           ("height,g", po::value<uint32_t>()->default_value(600)->required(), "window height")
+           ("depth,d", po::value<uint32_t>()->default_value(16)->required(), "depth buffer bits")
         ;
 
         p.add("width", 1);
         p.add("height", 2);
+        p.add("depth", 3);
 
         po::store(po::command_line_parser(ac, av).
                   options(desc).positional(p).run(), vm);
@@ -52,20 +54,39 @@ int main(int ac, char** av)
 
         po::notify(vm);
 
-    } catch (std::exception& e) {
+    }
+    catch (std::exception& e) {
         std::cout << e.what() << std::endl;
 
         return 1;
-    } catch (...) {
+    }
+    catch (...) {
         std::cout << "Exception of unknown type!" << std::endl;
     }
 
-    boost::shared_ptr<stratum::Graphic> graphic = stratum::getGraphic();
+    boost::shared_ptr<stratum::Core> core = stratum::CreateCore();
+    boost::shared_ptr<stratum::Graphic> graphic;
+    stratum::GraphicOptions options;
 
-    stratum::initialize();
-    graphic->initialize(vm["width"].as<uint32_t>(), vm["height"].as<uint32_t>());
-//  Stratum::Log::initialize();
-//
+    if (!core) {
+        std::cout << "Failed to create stratum core" << std::endl;
+        return 1;
+    }
+
+    core->initialize();
+    graphic = core->createGraphic();
+
+    if (!graphic) {
+        std::cout << "Failed to create stratum graphic" << std::endl;
+        return 1;
+    }
+
+    options.width = vm["width"].as<uint32_t>();
+    options.height = vm["height"].as<uint32_t>();
+    options.depthSize = vm["depth"].as<uint32_t>();
+
+    graphic->initialize(options);
+
 //  if (graphic.initialize(vm["width"].as<uint32_t>(), vm["height"].as<uint32_t>())) {
 //      while (!Stratum::inputRead());
 //
