@@ -25,7 +25,7 @@
 
 namespace po = boost::program_options;
 
-int main(int ac, char **av)
+int main(int ac, char** av)
 {
     po::options_description desc("Allowed options");
     po::positional_options_description p;
@@ -54,18 +54,14 @@ int main(int ac, char **av)
 
         po::notify(vm);
 
-    }
-    catch (std::exception& e) {
+    } catch (std::exception& e) {
         std::cout << e.what() << std::endl;
-
         return 1;
-    }
-    catch (...) {
+    } catch (...) {
         std::cout << "Exception of unknown type!" << std::endl;
     }
 
-    boost::shared_ptr<stratum::Core> core = stratum::CreateCore();
-    boost::shared_ptr<stratum::Graphic> graphic;
+    boost::shared_ptr<stratum::Core> core(stratum::CreateCore());
     stratum::GraphicOptions options;
 
     if (!core) {
@@ -73,8 +69,10 @@ int main(int ac, char **av)
         return 1;
     }
 
+    boost::shared_ptr<stratum::Graphic> graphic(core->createGraphic());
+
+
     core->initialize();
-    graphic = core->createGraphic();
 
     if (!graphic) {
         std::cout << "Failed to create stratum graphic" << std::endl;

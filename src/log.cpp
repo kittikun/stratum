@@ -1,9 +1,9 @@
 //  Copyright 2013 Kitti Vongsay
-// 
+//
 //  This file is part of Stratum.
 //
 //  Stratum is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU Lesser General Public License as 
+//  it under the terms of the GNU Lesser General Public License as
 //  published by the Free Software Foundation, either version 3 of
 //  the License, or(at your option) any later version.
 //
@@ -33,41 +33,38 @@ namespace src = boost::log::sources;
 
 namespace stratum
 {
-    namespace Log
+
+    std::ostream& operator<<(std::ostream& strm, ELogLevel level)
     {
+        static const char* strings[] =
+        {
+            "generic",
+            "gfx",
+            "plat",
+            "WARNING",
+            "ERROR",
+            "CRITICAL"
+        };
 
-        BOOST_LOG_ATTRIBUTE_KEYWORD(severity, "Severity", severity_level)
+        if (static_cast<std::size_t>(level) < sizeof(strings) / sizeof(*strings))
+            strm << strings[level];
+        else
+            strm << static_cast<int>(level);
 
-        void initialize() 
-        { 
-            logging::add_console_log(std::cout, keywords::format = (expr::format("%1%: [%2%] %3%")
-                                                                    % expr::format_date_time<boost::posix_time::ptime>("TimeStamp", "%H:%M:%S")
-                                                                    % severity
-                                                                    % expr::message
-                                                                    )); 
-            
-            logging::add_common_attributes();
-        }
+        return strm;
+    }
 
-        std::ostream& operator<<(std::ostream& strm, severity_level level) 
-        { 
-            static const char* strings[] = 
-            { 
-                "generic", 
-                "gfx",
-                "plat",
-                "WARNING",
-                "ERROR",
-                "CRITICAL"
-            }; 
-            
-            if (static_cast<std::size_t>(level) < sizeof(strings) / sizeof(*strings)) 
-                strm << strings[level]; 
-            else 
-                strm << static_cast<int>(level); 
-            
-            return strm;
-        }
+    BOOST_LOG_ATTRIBUTE_KEYWORD(severity, "Severity", ELogLevel)
+    
+    void Log::initialize()
+    {
+        logging::add_console_log(std::cout, keywords::format = (expr::format("%1%: [%2%] %3%")
+                                                                % expr::format_date_time<boost::posix_time::ptime>("TimeStamp", "%H:%M:%S")
+                                                                % severity
+                                                                % expr::message
+                                                                ));
 
-    } // namespace Log
+        logging::add_common_attributes();
+    }
+
 } // namespace stratum

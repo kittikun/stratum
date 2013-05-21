@@ -1,9 +1,9 @@
 //  Copyright 2013 Kitti Vongsay
-// 
+//
 //  This file is part of Stratum.
 //
 //  Stratum is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU Lesser General Public License as 
+//  it under the terms of the GNU Lesser General Public License as
 //  published by the Free Software Foundation, either version 3 of
 //  the License, or(at your option) any later version.
 //
@@ -18,20 +18,22 @@
 #ifndef CORE_IMPL_H
 #define CORE_IMPL_H
 
+#include <boost/utility.hpp>
+
 #include <core.h>
 
 namespace stratum
 {
-    class CoreImpl : public Core, boost::noncopyable
+    class Graphic;
+
+    class CoreImpl : public Core, private boost::noncopyable
     {
     public:
         void initialize();
         virtual Graphic* createGraphic();
-    }
+    };
 
-    // only one instance is allowed
-    DllExport Core* CreateCore();
-}
+} // namespace stratum
 
 #endif // CORE_IMPL_H
 

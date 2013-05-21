@@ -1,9 +1,9 @@
 //  Copyright 2013 Kitti Vongsay
-// 
+//
 //  This file is part of Stratum.
 //
 //  Stratum is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU Lesser General Public License as 
+//  it under the terms of the GNU Lesser General Public License as
 //  published by the Free Software Foundation, either version 3 of
 //  the License, or(at your option) any later version.
 //
@@ -26,14 +26,14 @@
 
 namespace stratum
 {
-    class GraphicImpl : public Graphic, boost::noncopyable
+    class GraphicImpl : public Graphic, private boost::noncopyable
     {
     private:
         struct Context
         {
-            EGLDisplay eglDisplay; 
-            EGLSurface eglSurface; 
-            EGLContext eglContext; 
+            EGLDisplay eglDisplay;
+            EGLSurface eglSurface;
+            EGLContext eglContext;
         };
 
     public:
@@ -41,8 +41,9 @@ namespace stratum
         void cleanUp();
 
     private:
-        bool createContext(const GraphicOptions& options);
-        void RenderLoop();
+        bool createEGL(const GraphicOptions& options);
+        void printGLInfo();
+        void renderLoop();
 
     private:
         boost::thread_group m_threads;

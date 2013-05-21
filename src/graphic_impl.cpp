@@ -1,9 +1,9 @@
 //  Copyright 2013 Kitti Vongsay
-// 
+//
 //  This file is part of Stratum.
 //
 //  Stratum is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU Lesser General Public License as 
+//  it under the terms of the GNU Lesser General Public License as
 //  published by the Free Software Foundation, either version 3 of
 //  the License, or(at your option) any later version.
 //
@@ -27,142 +27,141 @@
 
 namespace stratum
 {
+    void GraphicImpl::cleanUp()
+    {
+        m_threads.join_all();
+        eglMakeCurrent(m_context.eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
+        eglDestroyContext(m_context.eglDisplay, m_context.eglContext);
+        eglDestroySurface(m_context.eglDisplay, m_context.eglSurface);
+        eglTerminate(m_context.eglDisplay);
 
-boost::shared_ptr<Graphic> getGraphic()
-{
-    static bool instance = false; 
-    
-    if (instance == false) {
-        instance = true; 
-        
-        return boost::shared_ptr<Graphic>(new GraphicImpl());
-    }
-    
-    return nullptr;
-}
-
-void GraphicImpl::cleanUp()
-{
-    m_threads.join_all();
-    eglMakeCurrent(m_context.eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
-    eglDestroyContext(m_context.eglDisplay, m_context.eglContext);
-    eglDestroySurface(m_context.eglDisplay, m_context.eglSurface);
-    eglTerminate(m_context.eglDisplay);
-
-    GetPlatform().destroyNativeWindow();
-}
-
-bool GraphicImpl::createContext(const GraphicOptions& options)
-{
-    const char* str;
-    EGLBoolean ret; 
-    EGLConfig eglConfig; 
-    EGLContext eglContext;
-    EGLDisplay eglDisplay;
-    EGLint configSize; 
-    EGLSurface eglSurface;
-
-    EGLint eglConfigAttribs[] = { 
-        EGL_RED_SIZE, 1,
-        EGL_GREEN_SIZE, 1,
-        EGL_BLUE_SIZE, 1,
-        EGL_DEPTH_SIZE, 1,
-        EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
-        EGL_NONE
-    };
-
-    EGLint eglContextAttribs[] = { 
-        EGL_CONTEXT_CLIENT_VERSION, 2,
-        EGL_NONE
-    };
-
-    eglDisplay = eglGetDisplay(GetPlatform().getNativeDisplay());
-    if (eglDisplay == EGL_NO_DISPLAY) {
-        return VERIFYEGL();
+        GetPlatform().destroyNativeWindow();
     }
 
-    ret = eglInitialize(eglDisplay, NULL, NULL);
-    if (ret != EGL_TRUE) {
-        return VERIFYEGL();
+    bool GraphicImpl::createEGL(const GraphicOptions& options)
+    {
+        const char* str;
+        EGLBoolean ret;
+        EGLConfig eglConfig;
+        EGLContext eglContext;
+        EGLDisplay eglDisplay;
+        EGLint configSize;
+        EGLSurface eglSurface;
+
+        EGLint eglConfigAttribs[] = {
+            EGL_RED_SIZE, 1,
+            EGL_GREEN_SIZE, 1,
+            EGL_BLUE_SIZE, 1,
+            EGL_DEPTH_SIZE, 1,
+            EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
+            EGL_NONE
+        };
+
+        EGLint eglContextAttribs[] = {
+            EGL_CONTEXT_CLIENT_VERSION, 2,
+            EGL_NONE
+        };
+
+        eglDisplay = eglGetDisplay(GetPlatform().getNativeDisplay());
+        if (eglDisplay == EGL_NO_DISPLAY) {
+            return VERIFYEGL();
+        }
+
+        ret = eglInitialize(eglDisplay, NULL, NULL);
+        if (ret != EGL_TRUE) {
+            return VERIFYEGL();
+        }
+
+        str = eglQueryString(eglDisplay, EGL_VERSION);
+        LOGGFX << "EGL_VERSION = " << str;
+
+        str = eglQueryString(eglDisplay, EGL_VENDOR);
+        LOGGFX << "EGL_VENDOR = " << str;
+
+        str = eglQueryString(eglDisplay, EGL_EXTENSIONS);
+        LOGGFX << "EGL_EXTENSIONS = " << str;
+
+        str = eglQueryString(eglDisplay, EGL_CLIENT_APIS);
+        LOGGFX << "EGL_CLIENT_APIS = " << nullToStr(str);
+
+        ret = eglChooseConfig(eglDisplay, eglConfigAttribs, &eglConfig, 1, &configSize);
+        assert(configSize == 1);
+        if (ret != EGL_TRUE) {
+            return VERIFYEGL();
+        }
+
+        GetPlatform().createNativeWindow(options, eglConfig);
+
+        ret = eglBindAPI(EGL_OPENGL_ES_API);
+        if (ret != EGL_TRUE) {
+            return VERIFYEGL();
+        }
+
+        eglSurface = eglCreateWindowSurface(eglDisplay, eglConfig, GetPlatform().getNativeWindow(), NULL);
+        if (eglSurface == EGL_NO_SURFACE) {
+            return VERIFYEGL();
+        }
+
+        eglContext = eglCreateContext(eglDisplay, eglConfig, EGL_NO_CONTEXT, eglContextAttribs);
+        if (eglContext == EGL_NO_CONTEXT) {
+            return VERIFYEGL();
+        }
+
+//      ret = eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
+//      if (ret != EGL_TRUE) {
+//          return VERIFYEGL();
+//      }
+
+        m_context.eglDisplay = eglDisplay;
+        m_context.eglSurface = eglSurface;
+        m_context.eglContext = eglContext;
+
+        return true;
     }
 
-    str = eglQueryString(eglDisplay, EGL_VERSION);
-    LOGGFX << "EGL_VERSION = " << str;
-
-    str = eglQueryString(eglDisplay, EGL_VENDOR);
-    LOGGFX << "EGL_VENDOR = " << str;
-
-    str = eglQueryString(eglDisplay, EGL_EXTENSIONS);
-    LOGGFX << "EGL_EXTENSIONS = " << str;
-
-    str = eglQueryString(eglDisplay, EGL_CLIENT_APIS);
-    LOGGFX << "EGL_CLIENT_APIS = " << nullToStr(str);
-
-    ret = eglChooseConfig(eglDisplay, eglConfigAttribs, &eglConfig, 1, &configSize);
-    assert(configSize == 1);
-    if (ret != EGL_TRUE) {
-        return VERIFYEGL();
+    void GraphicImpl::printGLInfo()
+    {
+//      LOGGFX << "GL_RENDERER " << (char)glGetString(GL_RENDERER);
+//      LOGGFX << "GL_VERSION " << glGetString(GL_RENDERER);
+//      LOGGFX << "GL_VENDOR " << glGetString(GL_RENDERER);
+//      LOGGFX << "GL_EXTENSIONS " << glGetString(GL_RENDERER);
     }
 
-    GetPlatform().createNativeWindow(options, eglConfig);
+    const bool GraphicImpl::initialize(const GraphicOptions& options)
+    {
+        bool ret;
 
-    ret = eglBindAPI(EGL_OPENGL_ES_API);
-    if (ret != EGL_TRUE) {
-        return VERIFYEGL();
-    }
+        ret = createEGL(options);
+        if (!ret) {
+            LOGC << "Could not initialize EGL engine.";
+            return ret;
+        }
 
-    eglSurface = eglCreateWindowSurface(eglDisplay, eglConfig, GetPlatform().getNativeWindow(), NULL);
-    if (eglSurface == EGL_NO_SURFACE) {
-        return VERIFYEGL();
-    }
+        printGLInfo();
 
-    eglContext = eglCreateContext(eglDisplay, eglConfig, EGL_NO_CONTEXT, eglContextAttribs);
-    if (eglContext == EGL_NO_CONTEXT) {
-        return VERIFYEGL();
-    }
+        LOGGFX << "Creating GraphicImpl thread..";
+        m_threads.create_thread(boost::bind(&GraphicImpl::renderLoop, this));
 
-    ret = eglMakeCurrent(eglDisplay, eglSurface, eglSurface, eglContext);
-    if (ret != EGL_TRUE) {
-        return VERIFYEGL();
-    }
-
-    m_context.eglDisplay = eglDisplay;
-    m_context.eglSurface = eglSurface;
-    m_context.eglContext = eglContext;
-
-    return true;
-}
-
-const bool GraphicImpl::initialize(const GraphicOptions& options)
-{
-    bool ret;
-
-    ret = createContext(options);
-    if (!ret) {
-        LOGC << "Could not initialize GraphicImpl engine.";
         return ret;
     }
 
-    LOGGFX << "Creating GraphicImpl thread..";
-    m_threads.create_thread(boost::bind(&GraphicImpl::RenderLoop, this));
+    void GraphicImpl::renderLoop()
+    {
+        bool ret;
 
-    return ret;
-}
+        ret = eglMakeCurrent(m_context.eglDisplay, m_context.eglSurface, m_context.eglSurface, m_context.eglContext);
+        VERIFYEGL();
 
-void GraphicImpl::RenderLoop()
-{
-    bool ret;
+        while (1) {
+            glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+            glClear(GL_COLOR_BUFFER_BIT);
+            ret = VERIFYGL();
 
-    //while (1) {
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
-        ret = VERIFYGL();
-
-        LOGGFX << "swap buffer";
-        eglSwapBuffers(m_context.eglDisplay, m_context.eglSurface);
-        ret = VERIFYEGL();
-        assert(ret);
-    //}
-}
+            LOGGFX << "swap buffer";
+            eglSwapBuffers(m_context.eglDisplay, m_context.eglSurface);
+            ret = VERIFYEGL();
+            assert(ret);
+        }
+    }
 
 } // namespace stratum

@@ -1,9 +1,9 @@
 //  Copyright 2013 Kitti Vongsay
-// 
+//
 //  This file is part of Stratum.
 //
 //  Stratum is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU Lesser General Public License as 
+//  it under the terms of the GNU Lesser General Public License as
 //  published by the Free Software Foundation, either version 3 of
 //  the License, or(at your option) any later version.
 //
@@ -17,22 +17,41 @@
 
 #include "core_impl.h"
 
+#include "graphic_impl.h"
+#include "log.h"
+
 namespace stratum
 {
+    Core* CreateCore()
+    {
+        static bool instance = false;
 
-Core* CreateCore()
-{
-    static bool instance = false; 
-    
-    if (instance == false) {
-        instance = true; 
-        
-        return new CoreImpl();
+        if (instance == false) {
+            instance = true;
+
+            return new CoreImpl();
+        }
+
+        return nullptr;
     }
-    
-    return nullptr;
-}
 
+    void CoreImpl::initialize()
+    {
+        Log::initialize();
+    }
+
+    // Only one instance is allowed
+    Graphic* CoreImpl::createGraphic()
+    {
+        static bool instance = false;
+
+        if (instance == false) {
+            instance = true;
+            return new GraphicImpl();
+        }
+
+        return nullptr;
+    }
 
 } // namespace stratum
 
