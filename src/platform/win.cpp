@@ -30,63 +30,100 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 namespace stratum
 {
-
-const bool createNativeWindow(const uint32_t, const uint32_t, NativeInfo& outInfo)
-{
-    TCHAR className[] = TEXT("Stratum");
-    HDC hdc;
-    HWND hwnd ;
-    WNDCLASS wndclass;
-
-    LOGP << "Creating native window..";
-
-    wndclass.style         = CS_HREDRAW | CS_VREDRAW ;
-    wndclass.lpfnWndProc   = WndProc ;
-    wndclass.cbClsExtra    = 0 ;
-    wndclass.cbWndExtra    = 0 ;
-    wndclass.hInstance     = NULL ;
-    wndclass.hIcon         = LoadIcon(NULL, IDI_APPLICATION) ;
-    wndclass.hCursor       = LoadCursor(NULL, IDC_ARROW) ;
-    wndclass.hbrBackground = (HBRUSH) (COLOR_WINDOW + 1) ;
-    wndclass.lpszMenuName  = NULL ;
-    wndclass.lpszClassName = className ;
-
-    if (!RegisterClass(&wndclass))
+    class PlatformWin : public Platform
     {
-        LOGC << "This program requires Windows NT!";
-        return false;
+    public:
+        PlatformWin();
+        EGLNativeDisplayType getNativeDisplay();
+        EGLNativeWindowType getNativeWindow();
+
+        const bool createNativeWindow(const GraphicOptions& options, EGLConfig eglConfig);
+        const bool destroyNativeWindow();
+
+        void initializeInput();
+        const bool inputRead();
+
+    private:
+        HWND m_hwnd;
+    };
+
+    Platform& GetPlatform()
+    {
+        static PlatformWin instance;
+
+        return instance;
     }
 
-    hwnd = CreateWindowEx(NULL, className, TEXT ("Test"), WS_OVERLAPPEDWINDOW, 
-        CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
-        NULL, NULL, NULL, NULL);
+    PlatformWin::PlatformWin()
+        : m_hwnd(NULL)
+    {
+    }
 
-    ShowWindow(hwnd, SW_SHOWDEFAULT);
-    hdc = GetDC(hwnd);
+    EGLNativeDisplayType PlatformWin::getNativeDisplay()
+    {
+        return EGL_DEFAULT_DISPLAY;
+    }
 
-    outInfo.display = EGL_DEFAULT_DISPLAY;
-    outInfo.window = hwnd;
+    EGLNativeWindowType PlatformWin::getNativeWindow()
+    {
+        return m_hwnd;
+    }
 
-    return true;
-}
+    const bool PlatformWin::createNativeWindow(const GraphicOptions& options, EGLConfig)
+    {
+        TCHAR className[] = TEXT("Stratum");
+        HDC hdc;
+        HWND hwnd ;
+        WNDCLASS wndclass;
 
-const bool destroyNativeWindow(const NativeInfo& info)
-{
-    LOGP << "Destroying native window..";
+        LOGP << "Creating native window..";
 
-    DestroyWindow(info.window);
+        wndclass.style         = CS_HREDRAW | CS_VREDRAW ;
+        wndclass.lpfnWndProc   = WndProc ;
+        wndclass.cbClsExtra    = 0 ;
+        wndclass.cbWndExtra    = 0 ;
+        wndclass.hInstance     = NULL ;
+        wndclass.hIcon         = LoadIcon(NULL, IDI_APPLICATION) ;
+        wndclass.hCursor       = LoadCursor(NULL, IDC_ARROW) ;
+        wndclass.hbrBackground = (HBRUSH) (COLOR_WINDOW + 1) ;
+        wndclass.lpszMenuName  = NULL ;
+        wndclass.lpszClassName = className ;
 
-    return true;
-}
+        if (!RegisterClass(&wndclass))
+        {
+            LOGC << "This program requires Windows NT!";
+            return false;
+        }
 
-void initializeInput()
-{
-}
+        hwnd = CreateWindowEx(NULL, className, TEXT ("Test"), WS_OVERLAPPEDWINDOW, 
+            CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
+            NULL, NULL, NULL, NULL);
 
-const bool inputRead()
-{
-    return false;
-}
+        ShowWindow(hwnd, SW_SHOWDEFAULT);
+        hdc = GetDC(hwnd);
+
+        m_hwnd = hwnd;
+
+        return true;
+    }
+
+    const bool PlatformWin::destroyNativeWindow()
+    {
+        LOGP << "Destroying native window..";
+
+        DestroyWindow(m_hwnd);
+
+        return true;
+    }
+
+    void PlatformWin::initializeInput()
+    {
+    }
+
+    const bool PlatformWin::inputRead()
+    {
+        return false;
+    }
 
 } // namespace stratum
 

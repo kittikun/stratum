@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\export.cpp" />
+    <ClCompile Include="..\..\src\core_impl.cpp" />
     <ClCompile Include="..\..\src\graphic_impl.cpp" />
     <ClCompile Include="..\..\src\log.cpp" />
     <ClCompile Include="..\..\src\platform\linux.cpp" />
@@ -19,9 +19,10 @@
     <ClCompile Include="..\..\src\utility.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\include\core.h" />
     <ClInclude Include="..\..\include\graphic.h" />
     <ClInclude Include="..\..\include\platform.h" />
-    <ClInclude Include="..\..\include\stratum.h" />
+    <ClInclude Include="..\..\src\core_impl.h" />
     <ClInclude Include="..\..\src\graphic_impl.h" />
     <ClInclude Include="..\..\src\log.h" />
     <ClInclude Include="..\..\src\platform\linux.h" />
