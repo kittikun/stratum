@@ -17,9 +17,6 @@
 
 #include "core_impl.h"
 
-#include <boost/asio.hpp>
-#include <boost/date_time/posix_time/posix_time.hpp>
-
 #include "graphic_impl.h"
 #include "log.h"
 
@@ -41,11 +38,11 @@ namespace stratum
     const bool CoreImpl::initialize(const uint32_t width, const uint32_t height)
     {
         bool res;
-        GraphicOptions options;
 
         Log::initialize();
         m_platform = Platform::CreatePlatform();
 
+        GraphicOptions options;
         options.width = width;
         options.height = height;
         options.depthSize = 16;
@@ -67,12 +64,11 @@ namespace stratum
 
     void CoreImpl::start()
     {
-        boost::asio::io_service io;
-
-        LOGGFX << "Creating GraphicImpl thread..";
+        LOGGFX << "Creating Graphic thread..";
         m_threads.create_thread(boost::bind(&GraphicImpl::renderLoop, m_graphic));
 
         while (1) {
+            m_platform->inputRead();
         }
     }
 

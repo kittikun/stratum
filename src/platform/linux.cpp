@@ -42,7 +42,7 @@ namespace stratum
         virtual const bool createNativeWindow(const GraphicOptions& options, EGLConfig eglConfig);
         const bool destroyNativeWindow();
 
-        void initializeInput();
+        const bool initializeInput();
         const bool inputRead();
 
     private:
@@ -50,11 +50,9 @@ namespace stratum
         Window m_win;
     };
 
-    Platform& GetPlatform()
+    boost::shared_ptr<Platform> Platform::CreatePlatform()
     {
-        static PlatformLinux instance;
-
-        return instance;
+        return boost::shared_ptr<PlatformLinux>(new PlatformLinux);
     }
 
     PlatformLinux::PlatformLinux()
@@ -172,9 +170,9 @@ namespace stratum
         return false;
     }
 
-    void PlatformLinux::initializeInput()
+    const bool PlatformLinux::initializeInput()
     {
-
+        return true;
     }
 
 } // namepsace stratum

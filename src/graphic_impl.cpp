@@ -20,7 +20,6 @@
 #include <EGL/eglplatform.h>
 #include <GLES2/gl2.h>
 
-#include "platform/platform_impl.h"
 #include "log.h"
 #include "utility.h"
 
@@ -146,9 +145,11 @@ namespace stratum
     void GraphicImpl::renderLoop()
     {
         bool ret;
-
+        LOGGFX << "Entering render loop";
+        LOGGFX << m_context.eglDisplay << " " << m_context.eglSurface << " " << m_context.eglSurface << " " << m_context.eglContext;
         ret = eglMakeCurrent(m_context.eglDisplay, m_context.eglSurface, m_context.eglSurface, m_context.eglContext);
         VERIFYEGL();
+        LOGGFX << "Entering render loopu";
 
         while (1) {
             glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
@@ -156,6 +157,7 @@ namespace stratum
             ret = VERIFYGL();
 
             eglSwapBuffers(m_context.eglDisplay, m_context.eglSurface);
+            LOGGFX << "swap";
             ret = VERIFYEGL();
             assert(ret);
         }

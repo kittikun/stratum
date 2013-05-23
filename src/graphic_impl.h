@@ -23,7 +23,7 @@
 #include <EGL/egl.h>
 
 #include "options.h"
-#include "platform\platform_impl.h"
+#include "platform/platform_impl.h"
 
 namespace stratum
 {
