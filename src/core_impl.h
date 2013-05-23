@@ -25,6 +25,7 @@
 #include <core.h>
 
 #include "graphic_impl.h"
+#include "platform/platform_impl.h"
 #include "options.h"
 
 namespace stratum
@@ -32,13 +33,14 @@ namespace stratum
     class CoreImpl : public Core, private boost::noncopyable
     {
     public:
-        void initialize(const uint32_t width, const uint32_t height);
+        const bool initialize(const uint32_t width, const uint32_t height);
         void start();
         void stop();
 
     private:
         boost::thread_group m_threads;
         boost::shared_ptr<GraphicImpl> m_graphic;
+        boost::shared_ptr<Platform> m_platform;
     };
 
 } // namespace stratum

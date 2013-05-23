@@ -33,7 +33,7 @@ namespace stratum
         eglDestroySurface(m_context.eglDisplay, m_context.eglSurface);
         eglTerminate(m_context.eglDisplay);
 
-        GetPlatform().destroyNativeWindow();
+        m_platform->destroyNativeWindow();
     }
 
     bool GraphicImpl::createEGL(const GraphicOptions& options)
@@ -60,7 +60,9 @@ namespace stratum
             EGL_NONE
         };
 
-        eglDisplay = eglGetDisplay(GetPlatform().getNativeDisplay());
+        LOGGFX << "Initializiting EGL..";
+
+        eglDisplay = eglGetDisplay(m_platform->getNativeDisplay());
         if (eglDisplay == EGL_NO_DISPLAY) {
             return VERIFYEGL();
         }
@@ -88,14 +90,14 @@ namespace stratum
             return VERIFYEGL();
         }
 
-        GetPlatform().createNativeWindow(options, eglConfig);
+        m_platform->createNativeWindow(options, eglConfig);
 
         ret = eglBindAPI(EGL_OPENGL_ES_API);
         if (ret != EGL_TRUE) {
             return VERIFYEGL();
         }
 
-        eglSurface = eglCreateWindowSurface(eglDisplay, eglConfig, GetPlatform().getNativeWindow(), NULL);
+        eglSurface = eglCreateWindowSurface(eglDisplay, eglConfig, m_platform->getNativeWindow(), NULL);
         if (eglSurface == EGL_NO_SURFACE) {
             return VERIFYEGL();
         }
@@ -125,10 +127,11 @@ namespace stratum
 //      LOGGFX << "GL_EXTENSIONS " << glGetString(GL_RENDERER);
     }
 
-    const bool GraphicImpl::initialize(const GraphicOptions& options)
+    const bool GraphicImpl::initialize(const GraphicOptions& options, boost::shared_ptr<Platform> platform)
     {
         bool ret;
 
+        m_platform = platform;
         ret = createEGL(options);
         if (!ret) {
             LOGC << "Could not initialize EGL engine.";
@@ -152,7 +155,6 @@ namespace stratum
             glClear(GL_COLOR_BUFFER_BIT);
             ret = VERIFYGL();
 
-            LOGGFX << "swap buffer";
             eglSwapBuffers(m_context.eglDisplay, m_context.eglSurface);
             ret = VERIFYEGL();
             assert(ret);

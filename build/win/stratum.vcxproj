@@ -20,11 +20,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\include\core.h" />
-    <ClInclude Include="..\..\include\graphic.h" />
     <ClInclude Include="..\..\include\platform.h" />
     <ClInclude Include="..\..\src\core_impl.h" />
     <ClInclude Include="..\..\src\graphic_impl.h" />
     <ClInclude Include="..\..\src\log.h" />
+    <ClInclude Include="..\..\src\options.h" />
     <ClInclude Include="..\..\src\platform\linux.h" />
     <ClInclude Include="..\..\src\platform\platform_impl.h" />
     <ClInclude Include="..\..\src\platform\win.h" />
@@ -71,13 +71,13 @@
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Boost\include\boost-1_53;C:\Program Files %28x86%29\NVIDIA Corporation\win_x86_es2emu\include;C:\stratum\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>LIBRARY_EXPORT;BOOST_LIB_DIAGNOSTIC;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>C:\Boost\include\boost-1_53;C:\Program Files %28x86%29\NVIDIA Corporation\win_x86_es2emu\include;C:\stratum\include;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>LIBRARY_EXPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Boost\lib;C:\Program Files %28x86%29\NVIDIA Corporation\win_x86_es2emu\lib\release</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libGLES20.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Boost\lib;C:\Program Files %28x86%29\NVIDIA Corporation\win_x86_es2emu\lib\release;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x86</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libGLES20.lib;dinput8.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <LinkStatus>
       </LinkStatus>
     </Link>
@@ -89,15 +89,15 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Boost\include\boost-1_53;C:\Program Files %28x86%29\NVIDIA Corporation\win_x86_es2emu\include;C:\stratum\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Boost\include\boost-1_53;C:\Program Files %28x86%29\NVIDIA Corporation\win_x86_es2emu\include;C:\stratum\include;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>LIBRARY_EXPORT;_MBCS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>C:\Boost\lib;C:\Program Files %28x86%29\NVIDIA Corporation\win_x86_es2emu\lib\release</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libGLES20.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Boost\lib;C:\Program Files %28x86%29\NVIDIA Corporation\win_x86_es2emu\lib\release;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x86</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libGLES20.lib;dinput8.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

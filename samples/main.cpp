@@ -67,7 +67,10 @@ int main(int ac, char** av)
         return 1;
     }
 
-    core->initialize(vm["width"].as<uint32_t>(), vm["height"].as<uint32_t>());
+    if (!core->initialize(vm["width"].as<uint32_t>(), vm["height"].as<uint32_t>())) {
+        return 1;
+    }
+
     core->start();
 
     core->stop();

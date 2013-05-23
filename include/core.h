@@ -25,7 +25,7 @@ namespace stratum
     class Core
     {
     public:
-        virtual void initialize(const uint32_t width, const uint32_t height) = 0;
+        virtual const bool initialize(const uint32_t width, const uint32_t height) = 0;
         virtual void start() = 0;
         virtual void stop() = 0;
     };

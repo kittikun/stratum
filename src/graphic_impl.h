@@ -18,10 +18,12 @@
 #ifndef GRAPHIC_IMPL_H
 #define GRAPHIC_IMPL_H
 
+#include <boost/shared_ptr.hpp>
 #include <boost/utility.hpp>
 #include <EGL/egl.h>
 
 #include "options.h"
+#include "platform\platform_impl.h"
 
 namespace stratum
 {
@@ -35,7 +37,7 @@ namespace stratum
     class GraphicImpl : private boost::noncopyable
     {
     public:
-        const bool initialize(const GraphicOptions& options);
+        const bool initialize(const GraphicOptions& options, boost::shared_ptr<Platform> platform);
         void cleanUp();
         void renderLoop();
 
@@ -45,6 +47,7 @@ namespace stratum
 
     private:
         GraphicContext m_context;
+        boost::shared_ptr<Platform> m_platform;
     };
 
 } // namespace stratum

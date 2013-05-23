@@ -38,18 +38,31 @@ namespace stratum
         return nullptr;
     }
 
-    void CoreImpl::initialize(const uint32_t width, const uint32_t height)
+    const bool CoreImpl::initialize(const uint32_t width, const uint32_t height)
     {
+        bool res;
         GraphicOptions options;
+
+        Log::initialize();
+        m_platform = Platform::CreatePlatform();
 
         options.width = width;
         options.height = height;
         options.depthSize = 16;
 
         m_graphic.reset(new GraphicImpl());
-        m_graphic->initialize(options);
+        res = m_graphic->initialize(options, m_platform);
+        if (!res) {
+            return false;
+        }
 
-        Log::initialize();
+        res = m_platform->initializeInput();
+        if (!res) {
+            return false;
+        }
+
+
+        return true;
     }
 
     void CoreImpl::start()

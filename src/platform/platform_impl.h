@@ -18,6 +18,8 @@
 #ifndef PLATFORM_IMPL_H
 #define PLATFORM_IMPL_H
 
+#include <boost/shared_ptr.hpp>
+#include <boost/utility.hpp>
 #include <EGL/egl.h>
 #include <stdint.h>
 
@@ -36,17 +38,16 @@ namespace stratum
     class Platform
     {
     public:
+        static boost::shared_ptr<Platform> CreatePlatform();
         virtual EGLNativeDisplayType getNativeDisplay() = 0;
         virtual EGLNativeWindowType getNativeWindow() = 0;
 
         virtual const bool createNativeWindow(const GraphicOptions& options, EGLConfig eglConfig) = 0;
         virtual const bool destroyNativeWindow() = 0;
 
-        virtual void initializeInput() = 0;
+        virtual const bool initializeInput() = 0;
         virtual const bool inputRead() = 0;
     };
-
-    Platform& GetPlatform();
 
 } // namespace stratum
 
