@@ -18,36 +18,33 @@
 #ifndef GRAPHIC_IMPL_H
 #define GRAPHIC_IMPL_H
 
-#include <boost/thread.hpp>
 #include <boost/utility.hpp>
 #include <EGL/egl.h>
 
-#include <graphic.h>
+#include "options.h"
 
 namespace stratum
 {
-    class GraphicImpl : public Graphic, private boost::noncopyable
+    struct GraphicContext
     {
-    private:
-        struct Context
-        {
-            EGLDisplay eglDisplay;
-            EGLSurface eglSurface;
-            EGLContext eglContext;
-        };
+        EGLDisplay eglDisplay;
+        EGLSurface eglSurface;
+        EGLContext eglContext;
+    };
 
+    class GraphicImpl : private boost::noncopyable
+    {
     public:
         const bool initialize(const GraphicOptions& options);
         void cleanUp();
+        void renderLoop();
 
     private:
         bool createEGL(const GraphicOptions& options);
         void printGLInfo();
-        void renderLoop();
 
     private:
-        boost::thread_group m_threads;
-        Context m_context;
+        GraphicContext m_context;
     };
 
 } // namespace stratum

@@ -21,7 +21,6 @@
 
 // Stratum headers
 #include <core.h>
-#include <graphic.h>
 
 namespace po = boost::program_options;
 
@@ -62,36 +61,17 @@ int main(int ac, char** av)
     }
 
     boost::shared_ptr<stratum::Core> core(stratum::CreateCore());
-    stratum::GraphicOptions options;
 
     if (!core) {
         std::cout << "Failed to create stratum core" << std::endl;
         return 1;
     }
 
-    boost::shared_ptr<stratum::Graphic> graphic(core->createGraphic());
+    core->initialize(vm["width"].as<uint32_t>(), vm["height"].as<uint32_t>());
+    core->start();
 
+    core->stop();
 
-    core->initialize();
-
-    if (!graphic) {
-        std::cout << "Failed to create stratum graphic" << std::endl;
-        return 1;
-    }
-
-    options.width = vm["width"].as<uint32_t>();
-    options.height = vm["height"].as<uint32_t>();
-    options.depthSize = vm["depth"].as<uint32_t>();
-
-    graphic->initialize(options);
-
-//  if (graphic.initialize(vm["width"].as<uint32_t>(), vm["height"].as<uint32_t>())) {
-//      while (!Stratum::inputRead());
-//
-//      graphic.cleanUp();
-//  }
-
-    graphic->cleanUp();
 
     return 0;
 }

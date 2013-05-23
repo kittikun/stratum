@@ -17,6 +17,9 @@
 
 #include "core_impl.h"
 
+#include <boost/asio.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
+
 #include "graphic_impl.h"
 #include "log.h"
 
@@ -35,22 +38,34 @@ namespace stratum
         return nullptr;
     }
 
-    void CoreImpl::initialize()
+    void CoreImpl::initialize(const uint32_t width, const uint32_t height)
     {
+        GraphicOptions options;
+
+        options.width = width;
+        options.height = height;
+        options.depthSize = 16;
+
+        m_graphic.reset(new GraphicImpl());
+        m_graphic->initialize(options);
+
         Log::initialize();
     }
 
-    // Only one instance is allowed
-    Graphic* CoreImpl::createGraphic()
+    void CoreImpl::start()
     {
-        static bool instance = false;
+        boost::asio::io_service io;
 
-        if (instance == false) {
-            instance = true;
-            return new GraphicImpl();
+        LOGGFX << "Creating GraphicImpl thread..";
+        m_threads.create_thread(boost::bind(&GraphicImpl::renderLoop, m_graphic));
+
+        while (1) {
         }
+    }
 
-        return nullptr;
+    void CoreImpl::stop()
+    {
+        m_threads.join_all();
     }
 
 } // namespace stratum

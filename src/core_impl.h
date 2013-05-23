@@ -18,19 +18,27 @@
 #ifndef CORE_IMPL_H
 #define CORE_IMPL_H
 
+#include <boost/shared_ptr.hpp>
+#include <boost/thread.hpp>
 #include <boost/utility.hpp>
 
 #include <core.h>
 
+#include "graphic_impl.h"
+#include "options.h"
+
 namespace stratum
 {
-    class Graphic;
-
     class CoreImpl : public Core, private boost::noncopyable
     {
     public:
-        void initialize();
-        virtual Graphic* createGraphic();
+        void initialize(const uint32_t width, const uint32_t height);
+        void start();
+        void stop();
+
+    private:
+        boost::thread_group m_threads;
+        boost::shared_ptr<GraphicImpl> m_graphic;
     };
 
 } // namespace stratum

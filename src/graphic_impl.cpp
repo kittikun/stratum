@@ -17,7 +17,6 @@
 
 #include "graphic_impl.h"
 
-#include <boost/shared_ptr.hpp>
 #include <EGL/eglplatform.h>
 #include <GLES2/gl2.h>
 
@@ -29,7 +28,6 @@ namespace stratum
 {
     void GraphicImpl::cleanUp()
     {
-        m_threads.join_all();
         eglMakeCurrent(m_context.eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
         eglDestroyContext(m_context.eglDisplay, m_context.eglContext);
         eglDestroySurface(m_context.eglDisplay, m_context.eglSurface);
@@ -49,10 +47,10 @@ namespace stratum
         EGLSurface eglSurface;
 
         EGLint eglConfigAttribs[] = {
-            EGL_RED_SIZE, 1,
-            EGL_GREEN_SIZE, 1,
-            EGL_BLUE_SIZE, 1,
-            EGL_DEPTH_SIZE, 1,
+            EGL_RED_SIZE, 8,
+            EGL_GREEN_SIZE, 8,
+            EGL_BLUE_SIZE, 8,
+            EGL_DEPTH_SIZE, options.depthSize,
             EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
             EGL_NONE
         };
@@ -138,9 +136,6 @@ namespace stratum
         }
 
         printGLInfo();
-
-        LOGGFX << "Creating GraphicImpl thread..";
-        m_threads.create_thread(boost::bind(&GraphicImpl::renderLoop, this));
 
         return ret;
     }

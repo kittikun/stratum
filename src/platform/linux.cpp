@@ -27,9 +27,8 @@
 #include <X11/Xlib.h>
 #include <cstring>
 
-#include <graphic.h>
-
 #include "../log.h"
+#include "../options.h"
 #include "../utility.h"
 
 namespace stratum

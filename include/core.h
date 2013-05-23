@@ -22,13 +22,12 @@
 
 namespace stratum
 {
-    class Graphic;
-
     class Core
     {
     public:
-        virtual void initialize() = 0;
-        virtual Graphic* createGraphic() = 0; // Only one instance is allowed
+        virtual void initialize(const uint32_t width, const uint32_t height) = 0;
+        virtual void start() = 0;
+        virtual void stop() = 0;
     };
 
     // Only one instance is allowed
