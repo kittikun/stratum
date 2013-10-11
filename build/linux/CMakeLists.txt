@@ -5,7 +5,7 @@ project(stratumLib)
 set(ROOT_PATH   ${PROJECT_SOURCE_DIR}/../../)
 set(SRC_PATH	${ROOT_PATH}/source)
 set(OUT_PATH    ${ROOT_PATH}/lib)
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++11") 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -std=c++0x") 
 
 # Stratum library
 set(LIB_PATH	${PROJECT_SOURCE_DIR}/../../src)
@@ -13,11 +13,11 @@ set(LIB_PATH	${PROJECT_SOURCE_DIR}/../../src)
 set(INCLUDE_PATH ${PROJECT_SOURCE_DIR}/../../include)
 include_directories(${INCLUDE_PATH})
 
-set(LIB_SRC 	${LIB_PATH}/export.cpp
-                ${LIB_PATH}/graphic_impl.cpp
-		        ${LIB_PATH}/log.cpp
-		        ${LIB_PATH}/utility.cpp
-		        ${LIB_PATH}/platform/linux.cpp)
+set(LIB_SRC 	${LIB_PATH}/graphic_impl.cpp ${LIB_PATH}/core_impl.cpp
+                
+		${LIB_PATH}/log.cpp
+		${LIB_PATH}/utility.cpp
+		${LIB_PATH}/platform/linux.cpp)
 
 # required libs
 set(EXTRA_LIBS ${EXTRA_LIBS} libEGL.so libGLESv2.so)

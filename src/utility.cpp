@@ -16,6 +16,9 @@
 //  License along with Stratum.   If not, see <http://www.gnu.org/licenses/>.
 #include "utility.h"
 
+#include <wchar.h>
+
+
 #include "log.h"
 #include "platform/platform_impl.h"
 
@@ -25,7 +28,7 @@ namespace stratum {
     {
         switch (err) {
             case EGL_SUCCESS:
-                return "EGL_SUCCESS: Function succeeded.";
+                return "EGL_SUCCESS";
             case EGL_NOT_INITIALIZED:
                 return "EGL_NOT_INITIALIZED";
             case EGL_BAD_ACCESS:

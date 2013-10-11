@@ -1,9 +1,9 @@
 //  Copyright 2013 Kitti Vongsay
-// 
+//
 //  This file is part of Stratum.
 //
 //  Stratum is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU Lesser General Public License as 
+//  it under the terms of the GNU Lesser General Public License as
 //  published by the Free Software Foundation, either version 3 of
 //  the License, or(at your option) any later version.
 //
@@ -18,38 +18,36 @@
 #ifndef GRAPHIC_IMPL_H
 #define GRAPHIC_IMPL_H
 
-#include <boost/thread.hpp>
+#include <boost/shared_ptr.hpp>
 #include <boost/utility.hpp>
 #include <EGL/egl.h>
 
-#include <graphic.h>
-
+#include "options.h"
 #include "platform/platform_impl.h"
 
 namespace stratum
 {
-    class GraphicImpl : public Graphic, boost::noncopyable
+    struct GraphicContext
     {
-    private:
-        struct Context
-        {
-            NativeInfo nativeInfo;
-            EGLDisplay eglDisplay; 
-            EGLSurface eglSurface; 
-            EGLContext eglContext; 
-        };
+        EGLDisplay eglDisplay;
+        EGLSurface eglSurface;
+        EGLContext eglContext;
+    };
 
+    class GraphicImpl : private boost::noncopyable
+    {
     public:
-        const bool initialize(const uint32_t width, const uint32_t height);
+        const bool initialize(const GraphicOptions& options, boost::shared_ptr<Platform> platform);
         void cleanUp();
+        void renderLoop();
 
     private:
-        bool createContext();
-        void RenderLoop();
+        bool createEGL(const GraphicOptions& options);
+        void printGLInfo();
 
     private:
-        boost::thread_group m_threads;
-        Context m_context;
+        GraphicContext m_context;
+        boost::shared_ptr<Platform> m_platform;
     };
 
 } // namespace stratum

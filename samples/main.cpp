@@ -20,8 +20,7 @@
 #include <iostream>
 
 // Stratum headers
-#include <graphic.h>
-#include <stratum.h>
+#include <core.h>
 
 namespace po = boost::program_options;
 
@@ -34,13 +33,15 @@ int main(int ac, char** av)
     try {
 
         desc.add_options()
-            ("help,h", "output help message")
-            ("width,w", po::value<uint32_t>()->default_value(800)->required(), "window width")
-            ("height,h", po::value<uint32_t>()->default_value(600)->required(), "window height")
+           ("help,h", "output help message")
+           ("width,w", po::value<uint32_t>()->default_value(800)->required(), "window width")
+           ("height,g", po::value<uint32_t>()->default_value(600)->required(), "window height")
+           ("depth,d", po::value<uint32_t>()->default_value(16)->required(), "depth buffer bits")
         ;
 
         p.add("width", 1);
         p.add("height", 2);
+        p.add("depth", 3);
 
         po::store(po::command_line_parser(ac, av).
                   options(desc).positional(p).run(), vm);
@@ -54,25 +55,26 @@ int main(int ac, char** av)
 
     } catch (std::exception& e) {
         std::cout << e.what() << std::endl;
-
         return 1;
     } catch (...) {
         std::cout << "Exception of unknown type!" << std::endl;
     }
 
-    boost::shared_ptr<stratum::Graphic> graphic = stratum::getGraphic();
+    boost::shared_ptr<stratum::Core> core(stratum::CreateCore());
 
-    stratum::initialize();
-    graphic->initialize(vm["width"].as<uint32_t>(), vm["height"].as<uint32_t>());
-//  Stratum::Log::initialize();
-//
-//  if (graphic.initialize(vm["width"].as<uint32_t>(), vm["height"].as<uint32_t>())) {
-//      while (!Stratum::inputRead());
-//
-//      graphic.cleanUp();
-//  }
+    if (!core) {
+        std::cout << "Failed to create stratum core" << std::endl;
+        return 1;
+    }
 
-    graphic->cleanUp();
+    if (!core->initialize(vm["width"].as<uint32_t>(), vm["height"].as<uint32_t>())) {
+        return 1;
+    }
+
+    core->start();
+
+    core->stop();
+
 
     return 0;
 }

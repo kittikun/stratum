@@ -1,9 +1,9 @@
 //  Copyright 2013 Kitti Vongsay
-// 
+//
 //  This file is part of Stratum.
 //
 //  Stratum is free software: you can redistribute it and/or modify
-//  it under the terms of the GNU Lesser General Public License as 
+//  it under the terms of the GNU Lesser General Public License as
 //  published by the Free Software Foundation, either version 3 of
 //  the License, or(at your option) any later version.
 //
@@ -15,16 +15,35 @@
 //  You should have received a copy of the GNU Lesser General Public
 //  License along with Stratum.   If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef STRATUM_H
-#define STRATUM_H
+#ifndef CORE_IMPL_H
+#define CORE_IMPL_H
 
-#include "platform.h"
+#include <boost/shared_ptr.hpp>
+#include <boost/thread.hpp>
+#include <boost/utility.hpp>
+
+#include <core.h>
+
+#include "graphic_impl.h"
+#include "platform/platform_impl.h"
+#include "options.h"
 
 namespace stratum
 {
-    extern "C" DllExport void initialize();
+    class CoreImpl : public Core, private boost::noncopyable
+    {
+    public:
+        const bool initialize(const uint32_t width, const uint32_t height);
+        void start();
+        void stop();
+
+    private:
+        boost::thread_group m_threads;
+        boost::shared_ptr<GraphicImpl> m_graphic;
+        boost::shared_ptr<Platform> m_platform;
+    };
 
 } // namespace stratum
 
-#endif // STRATUM_H
+#endif // CORE_IMPL_H
 

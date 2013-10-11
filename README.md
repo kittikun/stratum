@@ -20,3 +20,12 @@ More info when the project reach a certain maturirty
 
 - VS2012 Solution file in build/win
 - EGL + GLES emulation (nVidia's OpenGL ES 2.0 was used)
+
+### Android
+
+Export $(NDK_ROOT)
+
+Boost:
+- build boost https://github.com/MysticTreeGames/Boost-for-Android
+- put boost include folder in build/android/jni/include
+- put libraries in build/android/jni/lib
