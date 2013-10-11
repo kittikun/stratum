@@ -30,6 +30,7 @@
 #include "../log.h"
 #include "../options.h"
 #include "../utility.h"
+#include "../input.h"
 
 namespace stratum
 {
@@ -43,7 +44,7 @@ namespace stratum
         const bool destroyNativeWindow();
 
         const bool initializeInput();
-        const bool inputRead();
+        const Keys inputRead();
 
     private:
         Display* m_dpy;
@@ -133,7 +134,7 @@ namespace stratum
         sizehints.height = options.height;
         sizehints.flags = USSize | USPosition;
         XSetNormalHints(m_dpy, m_win, &sizehints);
-        XSetStandardProperties(m_dpy, m_win, "testo", "none",
+        XSetStandardProperties(m_dpy, m_win, "test", "none",
                                None, (char**)NULL, 0, &sizehints);
 
         XMapWindow(m_dpy, m_win);
@@ -152,7 +153,7 @@ namespace stratum
         return true;
     }
 
-    const bool PlatformLinux::inputRead()
+    const Keys PlatformLinux::inputRead()
     {
         XEvent xev;
 
@@ -162,12 +163,17 @@ namespace stratum
 //      XGetWindowAttributes(x_display, win, &gwa);
 // todo: handle graphic resize
         } else if (xev.type == KeyPress) {
-            return true;
+            int key = XLookupKeysym(&xev.xkey, 0);
+
+            if (key == XK_Escape) {
+                LOGP << "KEY_ESCAPE";
+                return KEY_ESCAPE;
+            }
         } else if (xev.type == DestroyNotify) {
-            return true;
+            return KEY_ESCAPE;
         }
 
-        return false;
+        return KEY_NONE;
     }
 
     const bool PlatformLinux::initializeInput()

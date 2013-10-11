@@ -73,8 +73,5 @@ int main(int ac, char** av)
 
     core->start();
 
-    core->stop();
-
-
     return 0;
 }

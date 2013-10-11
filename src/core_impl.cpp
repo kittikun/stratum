@@ -35,6 +35,17 @@ namespace stratum
         return nullptr;
     }
 
+    CoreImpl::CoreImpl()
+    {
+        LOG << "Creating Core..";
+    }
+
+    CoreImpl::~CoreImpl()
+    {
+        LOG << "Destroying Core..";
+        printf("SALOPE");
+    }
+
     const bool CoreImpl::initialize(const uint32_t width, const uint32_t height)
     {
         bool res;
@@ -68,7 +79,12 @@ namespace stratum
         m_threads.create_thread(boost::bind(&GraphicImpl::renderLoop, m_graphic));
 
         while (1) {
-            m_platform->inputRead();
+            Keys key = m_platform->inputRead();
+
+            if (key == KEY_ESCAPE) {
+                stop();
+                break;
+            }
         }
     }
 

@@ -15,43 +15,17 @@
 //  You should have received a copy of the GNU Lesser General Public
 //  License along with Stratum.   If not, see <http://www.gnu.org/licenses/>.
 
-#ifndef GRAPHIC_IMPL_H
-#define GRAPHIC_IMPL_H
-
-#include <boost/shared_ptr.hpp>
-#include <boost/utility.hpp>
-#include <EGL/egl.h>
-
-#include "options.h"
-#include "platform/platform_impl.h"
+#ifndef INPUT_H
+#define INPUT_H
 
 namespace stratum
-{
-    struct GraphicContext
+{ 
+    enum Keys
     {
-        EGLDisplay eglDisplay;
-        EGLSurface eglSurface;
-        EGLContext eglContext;
-    };
-
-    class GraphicImpl : private boost::noncopyable
-    {
-    public:
-        ~GraphicImpl();
-
-        const bool initialize(const GraphicOptions& options, boost::shared_ptr<Platform> platform);
-        void cleanUp();
-        void renderLoop();
-
-    private:
-        bool createEGL(const GraphicOptions& options);
-        void printGLInfo();
-
-    private:
-        GraphicContext m_context;
-        boost::shared_ptr<Platform> m_platform;
+        KEY_NONE = 0,
+        KEY_ESCAPE
     };
 
 } // namespace stratum
 
-#endif // GRAPHIC_IMPL_H
+#endif // INPUT_H

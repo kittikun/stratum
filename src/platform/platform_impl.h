@@ -31,6 +31,8 @@
     #error "unknown platform"
 #endif
 
+#include "../input.h"
+
 namespace stratum
 {
     struct GraphicOptions;
@@ -46,7 +48,7 @@ namespace stratum
         virtual const bool destroyNativeWindow() = 0;
 
         virtual const bool initializeInput() = 0;
-        virtual const bool inputRead() = 0;
+        virtual const Keys inputRead() = 0;
     };
 
 } // namespace stratum

@@ -25,13 +25,20 @@
 
 namespace stratum
 {
+    GraphicImpl::~GraphicImpl()
+    {
+        cleanUp();
+    }
+
     void GraphicImpl::cleanUp()
     {
+        LOGGFX << "Cleaning up EGL...";
         eglMakeCurrent(m_context.eglDisplay, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
         eglDestroyContext(m_context.eglDisplay, m_context.eglContext);
         eglDestroySurface(m_context.eglDisplay, m_context.eglSurface);
         eglTerminate(m_context.eglDisplay);
 
+        LOGGFX << "Destroying native window...";
         m_platform->destroyNativeWindow();
     }
 
@@ -120,10 +127,15 @@ namespace stratum
 
     void GraphicImpl::printGLInfo()
     {
-//      LOGGFX << "GL_RENDERER " << (char)glGetString(GL_RENDERER);
-//      LOGGFX << "GL_VERSION " << glGetString(GL_RENDERER);
-//      LOGGFX << "GL_VENDOR " << glGetString(GL_RENDERER);
-//      LOGGFX << "GL_EXTENSIONS " << glGetString(GL_RENDERER);
+        const char* str = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
+
+        if (str) {
+            LOGGFX << "GL_RENDERER " << reinterpret_cast<const char*>(glGetString(GL_RENDERER));
+        }
+
+//      LOGGFX << "GL_VERSION " << reinterpret_cast<const char*>(glGetString(GL_VERSION));
+//      LOGGFX << "GL_VENDOR " << reinterpret_cast<const char*>(glGetString(GL_VENDOR));
+//      LOGGFX << "GL_EXTENSIONS " << reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
     }
 
     const bool GraphicImpl::initialize(const GraphicOptions& options, boost::shared_ptr<Platform> platform)
@@ -144,23 +156,24 @@ namespace stratum
 
     void GraphicImpl::renderLoop()
     {
-        bool ret;
-        LOGGFX << "Entering render loop";
-        LOGGFX << m_context.eglDisplay << " " << m_context.eglSurface << " " << m_context.eglSurface << " " << m_context.eglContext;
-        ret = eglMakeCurrent(m_context.eglDisplay, m_context.eglSurface, m_context.eglSurface, m_context.eglContext);
-        VERIFYEGL();
-        LOGGFX << "Entering render loopu";
-
-        while (1) {
-            glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT);
-            ret = VERIFYGL();
-
-            eglSwapBuffers(m_context.eglDisplay, m_context.eglSurface);
-            LOGGFX << "swap";
-            ret = VERIFYEGL();
-            assert(ret);
-        }
+//      bool ret;
+//
+//      LOGGFX << "Entering render loop";
+//      LOGGFX << m_context.eglDisplay << " " << m_context.eglSurface << " " << m_context.eglSurface << " " << m_context.eglContext;
+//      ret = eglMakeCurrent(m_context.eglDisplay, m_context.eglSurface, m_context.eglSurface, m_context.eglContext);
+//      VERIFYEGL();
+//      LOGGFX << "Entering render loopu";
+//
+//      while (1) {
+//          glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
+//          glClear(GL_COLOR_BUFFER_BIT);
+//          ret = VERIFYGL();
+//
+//          eglSwapBuffers(m_context.eglDisplay, m_context.eglSurface);
+//          LOGGFX << "swap";
+//          ret = VERIFYEGL();
+//          assert(ret);
+//      }
     }
 
 } // namespace stratum

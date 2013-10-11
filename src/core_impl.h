@@ -33,6 +33,9 @@ namespace stratum
     class CoreImpl : public Core, private boost::noncopyable
     {
     public:
+        CoreImpl();
+        ~CoreImpl();
+
         const bool initialize(const uint32_t width, const uint32_t height);
         void start();
         void stop();
