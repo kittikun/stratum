@@ -19,7 +19,8 @@ More info when the project reach a certain maturirty
 ### Windows
 
 - VS2012 Solution file in build/win
-- EGL + GLES emulation (nVidia's OpenGL ES 2.0 was used)
+- EGL + GLES emulation
+  Angle was used for developement - https://code.google.com/p/angleproject/
 
 ### Android
 

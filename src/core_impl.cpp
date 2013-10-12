@@ -37,28 +37,30 @@ namespace stratum
 
     CoreImpl::CoreImpl()
     {
+		Log::initialize();
         LOG << "Creating Core..";
     }
 
     CoreImpl::~CoreImpl()
     {
         LOG << "Destroying Core..";
-        printf("SALOPE");
     }
 
     const bool CoreImpl::initialize(const uint32_t width, const uint32_t height)
     {
         bool res;
 
-        Log::initialize();
         m_platform = Platform::CreatePlatform();
 
-        GraphicOptions options;
-        options.width = width;
-        options.height = height;
-        options.depthSize = 16;
 
         m_graphic.reset(new GraphicImpl());
+		m_stateSig.connect(StateSig::slot_type(&GraphicImpl::stateSlot, m_graphic.get(), _1).track(m_graphic));
+
+		GraphicOptions options;
+		options.width = width;
+		options.height = height;
+		options.depthSize = 16;
+
         res = m_graphic->initialize(options, m_platform);
         if (!res) {
             return false;
@@ -75,21 +77,21 @@ namespace stratum
 
     void CoreImpl::start()
     {
-        LOGGFX << "Creating Graphic thread..";
-        m_threads.create_thread(boost::bind(&GraphicImpl::renderLoop, m_graphic));
+		m_threads.create_thread(boost::bind(&GraphicImpl::start, m_graphic));
 
         while (1) {
-            Keys key = m_platform->inputRead();
+			Keys key = m_platform->inputRead();
 
-            if (key == KEY_ESCAPE) {
-                stop();
-                break;
-            }
+			if (key == KEY_ESCAPE) {
+				stop();
+				break;
+			}
         }
     }
 
     void CoreImpl::stop()
     {
+		m_stateSig(false);
         m_threads.join_all();
     }
 

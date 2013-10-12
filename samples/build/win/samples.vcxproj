@@ -53,16 +53,17 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\Boost\include\boost-1_53;C:\stratum\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Users\Kitti\Downloads\boost_1_54_0\boost_1_54_0;D:\stratum\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Boost\lib;C:\stratum\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\Users\Kitti\Downloads\boost_1_54_0\boost_1_54_0\stage\lib;D:\angle\angleproject\lib\Debug;$(SolutionDir)$(Configuration)\</AdditionalLibraryDirectories>
       <AdditionalDependencies>stratum.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
-      <Command>copy $(ProjectDir)..\..\..\lib\stratum.dll $(OutDir)</Command>
+      <Command>
+      </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">

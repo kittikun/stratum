@@ -78,18 +78,6 @@ namespace stratum
             return VERIFYEGL();
         }
 
-        str = eglQueryString(eglDisplay, EGL_VERSION);
-        LOGGFX << "EGL_VERSION = " << str;
-
-        str = eglQueryString(eglDisplay, EGL_VENDOR);
-        LOGGFX << "EGL_VENDOR = " << str;
-
-        str = eglQueryString(eglDisplay, EGL_EXTENSIONS);
-        LOGGFX << "EGL_EXTENSIONS = " << str;
-
-        str = eglQueryString(eglDisplay, EGL_CLIENT_APIS);
-        LOGGFX << "EGL_CLIENT_APIS = " << nullToStr(str);
-
         ret = eglChooseConfig(eglDisplay, eglConfigAttribs, &eglConfig, 1, &configSize);
         assert(configSize == 1);
         if (ret != EGL_TRUE) {
@@ -127,15 +115,39 @@ namespace stratum
 
     void GraphicImpl::printGLInfo()
     {
-        const char* str = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
+        const char* str = NULL;
 
+		str = eglQueryString(m_context.eglDisplay, EGL_VERSION);
+        LOGGFX << "EGL_VERSION = " << str;
+
+        str = eglQueryString(m_context.eglDisplay, EGL_VENDOR);
+        LOGGFX << "EGL_VENDOR = " << str;
+
+        str = eglQueryString(m_context.eglDisplay, EGL_EXTENSIONS);
+        LOGGFX << "EGL_EXTENSIONS = " << str;
+
+        str = eglQueryString(m_context.eglDisplay, EGL_CLIENT_APIS);
+        LOGGFX << "EGL_CLIENT_APIS = " << nullToStr(str);
+
+		str = reinterpret_cast<const char*>(glGetString(GL_RENDERER));
         if (str) {
-            LOGGFX << "GL_RENDERER " << reinterpret_cast<const char*>(glGetString(GL_RENDERER));
+            LOGGFX << "GL_RENDERER " << str;
         }
 
-//      LOGGFX << "GL_VERSION " << reinterpret_cast<const char*>(glGetString(GL_VERSION));
-//      LOGGFX << "GL_VENDOR " << reinterpret_cast<const char*>(glGetString(GL_VENDOR));
-//      LOGGFX << "GL_EXTENSIONS " << reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
+		str = reinterpret_cast<const char*>(glGetString(GL_VERSION));
+        if (str) {
+            LOGGFX << "GL_VERSION " << str;
+        }
+
+		str = reinterpret_cast<const char*>(glGetString(GL_VENDOR));
+        if (str) {
+            LOGGFX << "GL_VENDOR " << str;
+        }
+
+		str = reinterpret_cast<const char*>(glGetString(GL_EXTENSIONS));
+		if (str) {
+			LOGGFX << "GL_EXTENSIONS " << str;
+		}
     }
 
     const bool GraphicImpl::initialize(const GraphicOptions& options, boost::shared_ptr<Platform> platform)
@@ -154,26 +166,38 @@ namespace stratum
         return ret;
     }
 
+	void GraphicImpl::stateSlot(const bool state)
+	{
+		m_running = state;
+	}
+
+	void GraphicImpl::start()
+	{
+		LOGGFX << "Creating Graphic thread..";
+		m_running = true;
+		renderLoop();
+	}
+
     void GraphicImpl::renderLoop()
     {
-//      bool ret;
-//
-//      LOGGFX << "Entering render loop";
-//      LOGGFX << m_context.eglDisplay << " " << m_context.eglSurface << " " << m_context.eglSurface << " " << m_context.eglContext;
-//      ret = eglMakeCurrent(m_context.eglDisplay, m_context.eglSurface, m_context.eglSurface, m_context.eglContext);
-//      VERIFYEGL();
-//      LOGGFX << "Entering render loopu";
-//
-//      while (1) {
-//          glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
-//          glClear(GL_COLOR_BUFFER_BIT);
-//          ret = VERIFYGL();
-//
-//          eglSwapBuffers(m_context.eglDisplay, m_context.eglSurface);
-//          LOGGFX << "swap";
-//          ret = VERIFYEGL();
-//          assert(ret);
-//      }
-    }
+		bool ret;
+
+		LOGGFX << "Entering render loop";
+		LOGGFX << m_context.eglDisplay << " " << m_context.eglSurface << " " << m_context.eglSurface << " " << m_context.eglContext;
+		ret = eglMakeCurrent(m_context.eglDisplay, m_context.eglSurface, m_context.eglSurface, m_context.eglContext);
+		VERIFYEGL();
+
+		while (m_running) {
+			glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
+			glClear(GL_COLOR_BUFFER_BIT);
+			ret = VERIFYGL();
+
+			eglSwapBuffers(m_context.eglDisplay, m_context.eglSurface);
+			ret = VERIFYEGL();
+			assert(ret);
+		}
+
+		LOGGFX << "Exiting render loop";
+	}
 
 } // namespace stratum

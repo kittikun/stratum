@@ -1,5 +1,5 @@
 //  Copyright 2013 Kitti Vongsay
-// 
+//
 //  This file is part of Stratum.
 //
 //  Stratum is free software: you can redistribute it and/or modify
@@ -26,7 +26,27 @@
 
 LRESULT CALLBACK WndProc(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam)
 {
-    return DefWindowProc(hwnd, message, wParam, lParam);
+	switch (message) 
+	{
+		//case WM_COMMAND:
+		// handle menu selections etc.
+		//break;
+		//case WM_PAINT:
+		// draw our window - note: you must paint something here or not trap it!
+		//break;
+	case WM_CLOSE: {
+		int i = 0;
+		break;
+		}
+	case WM_DESTROY: {
+		PostQuitMessage(0);
+		break;
+		}
+	default:
+		// We do not want to handle this message so pass back to Windows
+		// to handle it in a default way
+		return DefWindowProc(hwnd, message, wParam, lParam);
+	}
 }
 
 namespace stratum
@@ -42,7 +62,7 @@ namespace stratum
         const bool destroyNativeWindow();
 
         const bool initializeInput();
-        const bool inputRead();
+        const Keys inputRead();
 
     private:
         HWND m_hwnd;
@@ -84,11 +104,13 @@ namespace stratum
 
         LOGP << "Creating native window..";
 
+		m_hInstance = GetModuleHandle(NULL);
+
         wndclass.style         = CS_HREDRAW | CS_VREDRAW ;
         wndclass.lpfnWndProc   = WndProc ;
         wndclass.cbClsExtra    = 0 ;
         wndclass.cbWndExtra    = 0 ;
-        wndclass.hInstance     = NULL ;
+        wndclass.hInstance     = m_hInstance ;
         wndclass.hIcon         = LoadIcon(NULL, IDI_APPLICATION) ;
         wndclass.hCursor       = LoadCursor(NULL, IDC_ARROW) ;
         wndclass.hbrBackground = (HBRUSH) (COLOR_WINDOW + 1) ;
@@ -100,8 +122,6 @@ namespace stratum
             LOGC << "This program requires Windows NT!";
             return false;
         }
-
-        m_hInstance = GetModuleHandle(NULL);
 
         hwnd = CreateWindowEx(NULL, className, TEXT ("Test"), WS_OVERLAPPEDWINDOW, 
             CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
@@ -182,9 +202,34 @@ namespace stratum
         return true;
     }
 
-    const bool PlatformWin::inputRead()
+    const Keys PlatformWin::inputRead()
     {
-        return false;
+		uint8_t  diKeys[256];
+		MSG Msg;
+		HRESULT res;
+
+		// Maybe not the best place to do this
+		while (PeekMessage(&Msg, NULL, 0, 0, PM_REMOVE)) {
+			TranslateMessage(&Msg);
+			DispatchMessage(&Msg);
+		}
+
+		// check if we lost focus
+		if (m_keyboard->Poll() != DI_OK) {
+			res = m_keyboard->Acquire();
+			if (FAILED(res)) {
+				//LOGC << "Failed to acquire keyboard after losing focus";
+				return KEY_NONE;
+			}
+		}
+
+		if (m_keyboard->GetDeviceState(256, diKeys) == DI_OK) {
+			if (diKeys[DIK_ESCAPE] & 0x80) { 
+				return KEY_ESCAPE;
+			}
+		}
+
+        return KEY_NONE;
     }
 
 } // namespace stratum

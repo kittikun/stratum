@@ -40,14 +40,18 @@ namespace stratum
         ~GraphicImpl();
 
         const bool initialize(const GraphicOptions& options, boost::shared_ptr<Platform> platform);
-        void cleanUp();
-        void renderLoop();
+		void start();
+
+		void stateSlot(const bool state);
 
     private:
+		void cleanUp();
         bool createEGL(const GraphicOptions& options);
         void printGLInfo();
+		void renderLoop();
 
     private:
+		bool m_running;
         GraphicContext m_context;
         boost::shared_ptr<Platform> m_platform;
     };

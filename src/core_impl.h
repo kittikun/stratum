@@ -21,6 +21,7 @@
 #include <boost/shared_ptr.hpp>
 #include <boost/thread.hpp>
 #include <boost/utility.hpp>
+#include <boost/signals2.hpp>
 
 #include <core.h>
 
@@ -44,6 +45,9 @@ namespace stratum
         boost::thread_group m_threads;
         boost::shared_ptr<GraphicImpl> m_graphic;
         boost::shared_ptr<Platform> m_platform;
+
+		typedef boost::signals2::signal<void (const bool)> StateSig;
+		StateSig m_stateSig;
     };
 
 } // namespace stratum

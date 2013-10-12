@@ -36,12 +36,10 @@ int main(int ac, char** av)
            ("help,h", "output help message")
            ("width,w", po::value<uint32_t>()->default_value(800)->required(), "window width")
            ("height,g", po::value<uint32_t>()->default_value(600)->required(), "window height")
-           ("depth,d", po::value<uint32_t>()->default_value(16)->required(), "depth buffer bits")
         ;
 
         p.add("width", 1);
         p.add("height", 2);
-        p.add("depth", 3);
 
         po::store(po::command_line_parser(ac, av).
                   options(desc).positional(p).run(), vm);
